@@ -15,12 +15,9 @@ body{
 header{
   background:linear-gradient(90deg,#2563eb,#f97316);
   color:white;
-  padding:35px 20px;
+  padding:32px 20px;
   text-align:center;
 }
-header h1{margin:0;font-size:34px;}
-header p{margin-top:10px;font-size:16px;}
-
 .container{
   display:flex;
   gap:20px;
@@ -32,9 +29,8 @@ header p{margin-top:10px;font-size:16px;}
   padding:22px;
   box-shadow:0 3px 12px rgba(0,0,0,.08);
 }
-.left{width:330px;}
+.left{width:340px;}
 .right{flex:1;}
-
 label{
   display:block;
   margin-top:14px;
@@ -44,8 +40,8 @@ select,input{
   width:100%;
   padding:10px;
   margin-top:6px;
-  box-sizing:border-box;
   font-size:15px;
+  box-sizing:border-box;
 }
 button{
   width:100%;
@@ -59,8 +55,8 @@ button{
   cursor:pointer;
 }
 .generate{background:#2563eb;}
-.print{background:#f97316;}
 .answer{background:#16a34a;}
+.print{background:#f97316;}
 
 .paper{
   margin-top:15px;
@@ -73,12 +69,11 @@ button{
 }
 .paper h2{
   text-align:center;
-  margin-bottom:8px;
 }
 .info{
   display:flex;
   justify-content:space-between;
-  margin:15px 0 25px;
+  margin:18px 0 25px;
 }
 .question{
   margin-bottom:20px;
@@ -95,12 +90,10 @@ button{
 }
 
 @media print{
-  header,.left,.right h2,.no-print{
+  header,.left,.right h2{
     display:none;
   }
-  body{
-    background:white;
-  }
+  body{background:white;}
   .container{
     display:block;
     padding:0;
@@ -112,7 +105,6 @@ button{
   .paper{
     border:none;
     padding:20px;
-    font-size:18px;
   }
 }
 </style>
@@ -122,167 +114,210 @@ button{
 
 <header>
   <h1>穎橙 AI 智慧學習</h1>
-  <p>國小考卷自動生成・素養題練習平台</p>
+  <p>國小考卷自動生成・單元式素養題練習平台</p>
 </header>
 
 <div class="container">
 
 <div class="panel left">
-  <label>年級</label>
-  <select id="grade">
-    <option>一年級</option>
-    <option>二年級</option>
-    <option selected>三年級</option>
-    <option>四年級</option>
-    <option>五年級</option>
-    <option>六年級</option>
-  </select>
 
-  <label>科目</label>
-  <select id="subject">
-    <option>國語</option>
-    <option selected>數學</option>
-    <option>自然</option>
-    <option>社會</option>
-    <option>英文</option>
-  </select>
+<label>年級</label>
+<select id="grade" onchange="updateUnits()">
+  <option>一年級</option>
+  <option selected>二年級</option>
+  <option>三年級</option>
+  <option>四年級</option>
+  <option>五年級</option>
+  <option>六年級</option>
+</select>
 
-  <label>教材版本</label>
-  <select id="version">
-    <option>康軒版</option>
-    <option>南一版</option>
-    <option>翰林版</option>
-    <option>自訂題庫</option>
-  </select>
+<label>科目</label>
+<select id="subject" onchange="updateUnits()">
+  <option>國語</option>
+  <option selected>數學</option>
+  <option>自然</option>
+  <option>社會</option>
+  <option>英文</option>
+</select>
 
-  <label>單元</label>
-  <select id="unit">
-    <option selected>分數</option>
-    <option>加減法</option>
-    <option>乘法</option>
-    <option>除法</option>
-    <option>時間</option>
-    <option>面積</option>
-  </select>
+<label>教材版本</label>
+<select id="version">
+  <option>康軒版</option>
+  <option>南一版</option>
+  <option>翰林版</option>
+  <option>自訂題庫</option>
+</select>
 
-  <label>題型</label>
-  <select id="type">
-    <option>選擇題</option>
-    <option>填充題</option>
-    <option>應用題</option>
-    <option selected>混合題</option>
-  </select>
+<label>學期</label>
+<select id="semester" onchange="updateUnits()">
+  <option selected>上學期</option>
+  <option>下學期</option>
+</select>
 
-  <label>難度</label>
-  <select id="level">
-    <option>簡單</option>
-    <option selected>中等</option>
-    <option>進階</option>
-  </select>
+<label>單元</label>
+<select id="unit"></select>
 
-  <label>題數</label>
-  <input id="count" type="number" value="8" min="1" max="20">
+<label>題型</label>
+<select id="type">
+  <option>選擇題</option>
+  <option>填充題</option>
+  <option>應用題</option>
+  <option selected>混合題</option>
+</select>
 
-  <button class="generate" onclick="generatePaper()">產生考卷</button>
-  <button class="answer" onclick="toggleAnswer()">顯示／隱藏答案</button>
-  <button class="print" onclick="window.print()">列印 PDF</button>
+<label>難度</label>
+<select id="level">
+  <option>簡單</option>
+  <option selected>中等</option>
+  <option>進階</option>
+</select>
+
+<label>題數</label>
+<input id="count" type="number" value="8" min="1" max="20">
+
+<button class="generate" onclick="generatePaper()">產生考卷</button>
+<button class="answer" onclick="toggleAnswer()">顯示／隱藏答案</button>
+<button class="print" onclick="window.print()">列印 PDF</button>
+
 </div>
 
 <div class="panel right">
   <h2>考卷預覽</h2>
   <div id="paper" class="paper">
-    請先選擇條件，然後按「產生考卷」。
+    請先選擇年級、科目、學期與單元，再按「產生考卷」。
   </div>
 </div>
 
 </div>
 
 <script>
-const mathQuestions = [
-  {
-    q:"媽媽買了一個披薩，哥哥吃了 1/2 個，妹妹吃了 1/4 個。兩人一共吃了多少個披薩？",
-    o:["① 2/6","② 3/4","③ 1/6","④ 1/8"],
-    a:"②"
-  },
-  {
-    q:"小宇有一條彩帶，先用掉 1/3 條，又用掉 1/3 條。小宇一共用掉幾條彩帶？",
-    o:["① 1/6","② 2/3","③ 3/3","④ 1/9"],
-    a:"②"
-  },
-  {
-    q:"老師把一張色紙平均分成 4 份，小美拿了其中 3 份。小美拿了這張色紙的幾分之幾？",
-    o:["① 1/4","② 2/4","③ 3/4","④ 4/3"],
-    a:"③"
-  },
-  {
-    q:"爸爸買了 8 顆橘子，平均分給 4 個小朋友，每人可以分到幾顆？",
-    o:["① 2 顆","② 3 顆","③ 4 顆","④ 12 顆"],
-    a:"①"
-  },
-  {
-    q:"小明每天閱讀 15 分鐘，連續閱讀 4 天。小明一共閱讀了幾分鐘？",
-    o:["① 19 分鐘","② 45 分鐘","③ 60 分鐘","④ 75 分鐘"],
-    a:"③"
-  },
-  {
-    q:"文具店一枝鉛筆 6 元，小安買了 5 枝。他需要付多少元？",
-    o:["① 11 元","② 25 元","③ 30 元","④ 35 元"],
-    a:"③"
-  },
-  {
-    q:"一盒餅乾有 24 片，平均分給 6 位同學，每位同學可以分到幾片？",
-    o:["① 3 片","② 4 片","③ 5 片","④ 6 片"],
-    a:"②"
-  },
-  {
-    q:"小華從下午 2 時開始寫功課，寫了 40 分鐘。他幾點幾分寫完？",
-    o:["① 2 時20分","② 2時40分","③ 3時00分","④ 3時40分"],
-    a:"②"
-  },
-  {
-    q:"一個長方形花圃長 6 公尺、寬 3 公尺，面積是多少平方公尺？",
-    o:["① 9 平方公尺","② 12 平方公尺","③ 18 平方公尺","④ 36 平方公尺"],
-    a:"③"
-  },
-  {
-    q:"小婷有 50 元，買一本 32 元的筆記本，還剩下多少元？",
-    o:["① 12 元","② 18 元","③ 22 元","④ 82 元"],
-    a:"②"
-  }
-];
+const units = {
+  "二年級-數學-上學期":[
+    "第1單元 2位數的加減",
+    "第2單元 2步驟的加減",
+    "第3單元 分分看",
+    "第4單元 認識公分",
+    "第5單元 乘法初步"
+  ],
+  "二年級-數學-下學期":[
+    "第1單元 1000以內的數",
+    "第2單元 加減應用",
+    "第3單元 分裝與平分",
+    "第4單元 公尺和公分",
+    "第5單元 乘法"
+  ],
+  "三年級-數學-上學期":[
+    "第1單元 乘法",
+    "第2單元 除法",
+    "第3單元 時間",
+    "第4單元 分數",
+    "第5單元 圓"
+  ],
+  "三年級-數學-下學期":[
+    "第1單元 大數",
+    "第2單元 公斤和公克",
+    "第3單元 分數加減",
+    "第4單元 面積",
+    "第5單元 小數"
+  ],
+  "一年級-國語-上學期":[
+    "第1單元 注音符號",
+    "第2單元 國字認讀",
+    "第3單元 詞語練習"
+  ],
+  "二年級-國語-上學期":[
+    "第1單元 生字",
+    "第2單元 造詞",
+    "第3單元 閱讀理解"
+  ]
+};
+
+const questionBank = {
+  "第1單元 2位數的加減":[
+    ["小明有 35 元，媽媽又給他 24 元。現在小明一共有多少元？",["① 49元","② 59元","③ 69元","④ 79元"],"②"],
+    ["小美有 68 顆貼紙，送給同學 25 顆後，還剩下幾顆？",["① 33顆","② 43顆","③ 53顆","④ 63顆"],"②"],
+    ["哥哥有 47 張卡片，弟弟有 32 張卡片，兩人合起來有幾張？",["① 69張","② 79張","③ 89張","④ 99張"],"②"],
+    ["書架上有 56 本書，借出了 21 本，書架上還有幾本？",["① 25本","② 35本","③ 45本","④ 55本"],"②"]
+  ],
+  "第2單元 2步驟的加減":[
+    ["小華有 30 元，爸爸給他 20 元，他又買了 15 元的橡皮擦。小華還剩多少元？",["① 25元","② 35元","③ 45元","④ 50元"],"②"],
+    ["教室裡原有 28 人，又進來 12 人，後來有 9 人離開。現在教室有幾人？",["① 21人","② 31人","③ 41人","④ 49人"],"②"],
+    ["水果店有 45 顆蘋果，上午賣出 18 顆，下午又進貨 20 顆。現在有幾顆？",["① 37顆","② 47顆","③ 57顆","④ 67顆"],"②"]
+  ],
+  "第3單元 分分看":[
+    ["老師有 12 顆糖果，要平均分給 4 位小朋友，每人可以分到幾顆？",["① 2顆","② 3顆","③ 4顆","④ 6顆"],"②"],
+    ["媽媽買了 15 顆橘子，每 5 顆裝成一袋，可以裝成幾袋？",["① 2袋","② 3袋","③ 4袋","④ 5袋"],"②"],
+    ["有 18 枝鉛筆，平均分給 6 位同學，每人可以分到幾枝？",["① 2枝","② 3枝","③ 4枝","④ 6枝"],"②"]
+  ]
+};
+
+function updateUnits(){
+  const grade = document.getElementById("grade").value;
+  const subject = document.getElementById("subject").value;
+  const semester = document.getElementById("semester").value;
+  const key = grade + "-" + subject + "-" + semester;
+  const unitSelect = document.getElementById("unit");
+
+  unitSelect.innerHTML = "";
+
+  let list = units[key] || ["尚未建立此年級科目的單元"];
+
+  list.forEach(u=>{
+    let option = document.createElement("option");
+    option.textContent = u;
+    unitSelect.appendChild(option);
+  });
+}
 
 function generatePaper(){
   const grade = document.getElementById("grade").value;
   const subject = document.getElementById("subject").value;
   const version = document.getElementById("version").value;
+  const semester = document.getElementById("semester").value;
   const unit = document.getElementById("unit").value;
   const type = document.getElementById("type").value;
   const level = document.getElementById("level").value;
   const count = Number(document.getElementById("count").value);
 
-  let questions = mathQuestions.slice(0,count);
-  let answerText = "";
+  let questions = questionBank[unit];
+
+  if(!questions){
+    document.getElementById("paper").innerHTML =
+    `<h2>${grade}${subject}測驗卷</h2>
+     <p>目前「${unit}」尚未建立題庫。</p>
+     <p>請先選擇二年級數學的「第1單元、第2單元、第3單元」測試。</p>`;
+    return;
+  }
 
   let html = `
     <h2>${grade}${subject}測驗卷</h2>
-    <div style="text-align:center;">${version}｜${unit}｜${type}｜${level}</div>
+    <div style="text-align:center;">
+      ${version}｜${semester}｜${unit}｜${type}｜${level}
+    </div>
+
     <div class="info">
       <span>姓名：__________</span>
       <span>班級：__________</span>
       <span>座號：__________</span>
     </div>
+
     <b>一、選擇題</b>
   `;
 
-  questions.forEach((item,index)=>{
+  let answerText = "";
+
+  for(let i=0;i<count;i++){
+    let q = questions[i % questions.length];
+
     html += `
       <div class="question">
-        <p>${index+1}. ${item.q}</p>
-        <div class="options">${item.o.join("<br>")}</div>
+        <p>${i+1}. ${q[0]}</p>
+        <div class="options">${q[1].join("<br>")}</div>
       </div>
     `;
-    answerText += `${index+1}. ${item.a}　`;
-  });
+
+    answerText += `${i+1}. ${q[2]}　`;
+  }
 
   html += `
     <div id="answerBox" class="answerBox">
@@ -301,6 +336,8 @@ function toggleAnswer(){
   }
   box.style.display = box.style.display === "block" ? "none" : "block";
 }
+
+updateUnits();
 </script>
 
 </body>
