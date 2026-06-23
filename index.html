@@ -1,15 +1,171 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <title>穎橙 AI 智慧學習</title>
-</head>
-<body>
-  <h1>穎橙 AI 智慧學習</h1>
-  <p>國小考卷自動生成・智慧學習平台</p>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <textarea rows="10" cols="60" placeholder="請輸入題目內容"></textarea>
-  <br><br>
-  <button onclick="window.print()">列印考卷</button>
+<title>穎橙 AI 智慧學習</title>
+
+<style>
+body{
+    margin:0;
+    font-family:"Microsoft JhengHei",sans-serif;
+    background:#f4f7fb;
+}
+
+header{
+    background:linear-gradient(90deg,#2563eb,#f97316);
+    color:white;
+    padding:20px;
+    text-align:center;
+}
+
+.container{
+    display:flex;
+    gap:20px;
+    padding:20px;
+}
+
+.left{
+    width:320px;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+.right{
+    flex:1;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+label{
+    display:block;
+    margin-top:15px;
+    font-weight:bold;
+}
+
+select,input{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:20px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.generate{
+    background:#2563eb;
+    color:white;
+}
+
+.print{
+    background:#f97316;
+    color:white;
+}
+
+.paper{
+    min-height:500px;
+    border:1px solid #ddd;
+    padding:20px;
+    margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>穎橙 AI 智慧學習</h1>
+    <p>國小考卷自動生成平台</p>
+</header>
+
+<div class="container">
+
+<div class="left">
+
+<label>年級</label>
+<select id="grade">
+<option>一年級</option>
+<option>二年級</option>
+<option>三年級</option>
+<option>四年級</option>
+<option>五年級</option>
+<option>六年級</option>
+</select>
+
+<label>科目</label>
+<select id="subject">
+<option>國語</option>
+<option>數學</option>
+<option>自然</option>
+<option>社會</option>
+<option>英文</option>
+</select>
+
+<label>題數</label>
+<input id="count" type="number" value="10">
+
+<button class="generate" onclick="generatePaper()">
+產生考卷
+</button>
+
+<button class="print" onclick="window.print()">
+列印 PDF
+</button>
+
+</div>
+
+<div class="right">
+
+<h2>考卷預覽</h2>
+
+<div id="paper" class="paper">
+請點選「產生考卷」
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function generatePaper(){
+
+let grade=document.getElementById("grade").value;
+let subject=document.getElementById("subject").value;
+let count=document.getElementById("count").value;
+
+let html=`
+<h2>${grade}${subject}測驗卷</h2>
+<hr>
+`;
+
+for(let i=1;i<=count;i++){
+
+html+=`
+<p>
+${i}. 5 + ${i} = _____
+</p>
+`;
+
+}
+
+document.getElementById("paper").innerHTML=html;
+
+}
+
+</script>
+
 </body>
 </html>
