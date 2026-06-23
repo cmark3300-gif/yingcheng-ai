@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>生字簿產生器 V4｜穎橙 AI 智慧學習</title>
+<title>生字簿產生器 V5｜穎橙 AI 智慧學習</title>
 
 <style>
 body{margin:0;font-family:"Microsoft JhengHei",Arial,sans-serif;background:#f4f7fb;color:#1f2937;}
 header{background:linear-gradient(90deg,#2563eb,#f97316);color:white;padding:26px 20px;text-align:center;}
 .container{display:flex;gap:20px;padding:20px;}
 .panel{background:white;border-radius:14px;padding:22px;box-shadow:0 3px 12px rgba(0,0,0,.08);}
-.left{width:370px;}
+.left{width:390px;}
 .right{flex:1;}
 label{display:block;margin-top:14px;font-weight:bold;}
 textarea,select,input{width:100%;box-sizing:border-box;padding:10px;margin-top:6px;font-size:16px;}
@@ -50,7 +50,7 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
 }
 
 .zhuyinBox{
-  width:30%;
+  width:32%;
   height:100%;
   border-left:1px solid #999;
   writing-mode:vertical-rl;
@@ -65,7 +65,7 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
 }
 
 .charBox{
-  width:70%;
+  width:68%;
   height:100%;
   position:relative;
   display:flex;
@@ -102,19 +102,11 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
 }
 .diagonal1{transform:rotate(45deg);}
 .diagonal2{transform:rotate(-45deg);}
-
 .sampleChar{z-index:2;}
 .hiddenChar{color:transparent!important;}
 
-.row2{
-  display:flex;
-  gap:10px;
-  align-items:center;
-}
-.row2 input[type="color"]{
-  height:42px;
-  padding:2px;
-}
+.row2{display:flex;gap:10px;align-items:center;}
+.row2 input[type="color"]{height:42px;padding:2px;}
 
 @media print{
   header,.left,.right h2{display:none;}
@@ -137,15 +129,15 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
 
 <header>
   <h1>穎橙 AI 智慧學習</h1>
-  <p>生字簿產生器 V4｜注音欄加寬＋描寫功能</p>
+  <p>生字簿產生器 V5｜整段文字＋指定字特別設定</p>
 </header>
 
 <div class="container">
 
 <div class="panel left">
 
-<label>輸入生字</label>
-<textarea id="words" rows="5" placeholder="例如：後產出PDF">後產出PDF</textarea>
+<label>輸入整段文字</label>
+<textarea id="words" rows="5" placeholder="例如：小明今天到學校上課">小明今天到學校上課</textarea>
 
 <label>表格大小</label>
 <select id="gridSize">
@@ -154,34 +146,29 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
   <option value="12">12 × 12</option>
 </select>
 
-<label>練習模式</label>
-<select id="mode">
-  <option value="sample" selected>輸入字直接填入表格</option>
-  <option value="sampleBlank">每個字後面加 1 格空白</option>
-  <option value="repeat">每個字重複練習</option>
+<label>一般文字設定</label>
+<select id="normalMode">
+  <option value="both" selected>國字＋注音都顯示</option>
+  <option value="charOnly">只顯示國字</option>
+  <option value="zhuyinOnly">只顯示注音</option>
+  <option value="hideChar">隱藏國字，只留注音</option>
+  <option value="hideZhuyin">隱藏注音，只留國字</option>
 </select>
 
-<label>每個字重複格數</label>
-<select id="repeatCount">
-  <option value="2">2格</option>
-  <option value="4" selected>4格</option>
-  <option value="6">6格</option>
-  <option value="8">8格</option>
-  <option value="10">10格</option>
-</select>
+<label>只顯示注音的字</label>
+<input id="zhuyinOnlyChars" placeholder="例如：今、明">
 
-<label>注音欄</label>
-<select id="showZhuyin">
-  <option value="yes" selected>顯示</option>
-  <option value="no">不顯示</option>
-</select>
+<label>只顯示國字的字</label>
+<input id="charOnlyChars" placeholder="例如：校、課">
 
-<label>國字模式</label>
-<select id="charMode">
-  <option value="show" selected>顯示</option>
-  <option value="trace">描紅／描寫</option>
-  <option value="hide">隱藏</option>
-</select>
+<label>描寫字</label>
+<input id="traceChars" placeholder="例如：學、習">
+
+<label>隱藏國字的字</label>
+<input id="hideCharChars" placeholder="例如：天、上">
+
+<label>隱藏注音的字</label>
+<input id="hideZhuyinChars" placeholder="例如：小、到">
 
 <label>字體顏色</label>
 <div class="row2">
@@ -189,7 +176,7 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
   <input type="text" id="fontColorText" value="#111827">
 </div>
 
-<label>透明度</label>
+<label>描寫透明度</label>
 <select id="opacity">
   <option value="1">100%</option>
   <option value="0.75">75%</option>
@@ -202,34 +189,37 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
 <button class="print" onclick="window.print()">列印／另存 PDF</button>
 
 <p class="note">
-V4：注音欄已加寬，可選擇國字顯示、描寫或隱藏，也可調整字體顏色與透明度。
+V5：可輸入整段文字，預設國字與注音都顯示，也可指定某些字只顯示國字、只顯示注音、描寫或隱藏。
 </p>
 
 </div>
 
 <div class="panel right">
 <h2>生字簿預覽</h2>
-<div id="paper" class="paper">請輸入生字後，按「產生生字簿」。</div>
+<div id="paper" class="paper">請輸入文字後，按「產生生字簿」。</div>
 </div>
 
 </div>
 
 <script>
 const zhuyinMap = {
-  "後":"ㄏㄡˋ","產":"ㄔㄢˇ","出":"ㄔㄨ",
-  "表":"ㄅㄧㄠˇ","格":"ㄍㄜˊ","國":"ㄍㄨㄛˊ",
-  "語":"ㄩˇ","學":"ㄒㄩㄝˊ","習":"ㄒㄧˊ",
-  "生":"ㄕㄥ","字":"ㄗˋ","天":"ㄊㄧㄢ",
-  "地":"ㄉㄧˋ","人":"ㄖㄣˊ","大":"ㄉㄚˋ",
-  "小":"ㄒㄧㄠˇ","中":"ㄓㄨㄥ","山":"ㄕㄢ",
-  "水":"ㄕㄨㄟˇ","火":"ㄏㄨㄛˇ","木":"ㄇㄨˋ",
-  "金":"ㄐㄧㄣ","土":"ㄊㄨˇ","日":"ㄖˋ",
-  "月":"ㄩㄝˋ","我":"ㄨㄛˇ","你":"ㄋㄧˇ",
-  "他":"ㄊㄚ","她":"ㄊㄚ","好":"ㄏㄠˇ"
+  "小":"ㄒㄧㄠˇ","明":"ㄇㄧㄥˊ","今":"ㄐㄧㄣ","天":"ㄊㄧㄢ",
+  "到":"ㄉㄠˋ","學":"ㄒㄩㄝˊ","校":"ㄒㄧㄠˋ","上":"ㄕㄤˋ",
+  "課":"ㄎㄜˋ","後":"ㄏㄡˋ","產":"ㄔㄢˇ","出":"ㄔㄨ",
+  "表":"ㄅㄧㄠˇ","格":"ㄍㄜˊ","國":"ㄍㄨㄛˊ","語":"ㄩˇ",
+  "習":"ㄒㄧˊ","生":"ㄕㄥ","字":"ㄗˋ","地":"ㄉㄧˋ",
+  "人":"ㄖㄣˊ","大":"ㄉㄚˋ","中":"ㄓㄨㄥ","山":"ㄕㄢ",
+  "水":"ㄕㄨㄟˇ","火":"ㄏㄨㄛˇ","木":"ㄇㄨˋ","金":"ㄐㄧㄣ",
+  "土":"ㄊㄨˇ","日":"ㄖˋ","月":"ㄩㄝˋ","我":"ㄨㄛˇ",
+  "你":"ㄋㄧˇ","他":"ㄊㄚ","她":"ㄊㄚ","好":"ㄏㄠˇ"
 };
 
 function getZhuyin(ch){
   return zhuyinMap[ch] || "";
+}
+
+function parseChars(str){
+  return str.replace(/[，,、\s]/g,"").split("");
 }
 
 document.getElementById("fontColor").addEventListener("input",function(){
@@ -245,31 +235,31 @@ document.getElementById("fontColorText").addEventListener("input",function(){
 function generateBook(){
   const text=document.getElementById("words").value.replace(/\s/g,"");
   const gridSize=Number(document.getElementById("gridSize").value);
-  const mode=document.getElementById("mode").value;
-  const repeatCount=Number(document.getElementById("repeatCount").value);
-  const showZhuyin=document.getElementById("showZhuyin").value;
-  const charMode=document.getElementById("charMode").value;
+  const normalMode=document.getElementById("normalMode").value;
   const fontColor=document.getElementById("fontColorText").value || "#111827";
   const opacity=document.getElementById("opacity").value;
 
+  const zhuyinOnlyChars=parseChars(document.getElementById("zhuyinOnlyChars").value);
+  const charOnlyChars=parseChars(document.getElementById("charOnlyChars").value);
+  const traceChars=parseChars(document.getElementById("traceChars").value);
+  const hideCharChars=parseChars(document.getElementById("hideCharChars").value);
+  const hideZhuyinChars=parseChars(document.getElementById("hideZhuyinChars").value);
+
   if(!text){
-    alert("請先輸入生字");
+    alert("請先輸入文字");
     return;
   }
 
-  let items=[];
+  let items=[...text].map(ch=>{
+    let mode=normalMode;
 
-  [...text].forEach(ch=>{
-    if(mode==="sample"){
-      items.push({char:ch});
-    }else if(mode==="sampleBlank"){
-      items.push({char:ch});
-      items.push({char:ch, blank:true});
-    }else if(mode==="repeat"){
-      for(let i=0;i<repeatCount;i++){
-        items.push({char:ch});
-      }
-    }
+    if(zhuyinOnlyChars.includes(ch)) mode="zhuyinOnly";
+    if(charOnlyChars.includes(ch)) mode="charOnly";
+    if(traceChars.includes(ch)) mode="trace";
+    if(hideCharChars.includes(ch)) mode="hideChar";
+    if(hideZhuyinChars.includes(ch)) mode="hideZhuyin";
+
+    return {char:ch,mode:mode};
   });
 
   const cellsPerPage=gridSize*gridSize;
@@ -297,7 +287,7 @@ function generateBook(){
       for(let c=0;c<gridSize;c++){
         const index=c*gridSize+r;
         const item=pageItems[index];
-        html+=createCell(item,showZhuyin,cellSize,charMode,fontColor,opacity);
+        html+=createCell(item,cellSize,fontColor,opacity);
       }
     }
 
@@ -307,27 +297,45 @@ function generateBook(){
   document.getElementById("paper").innerHTML=html;
 }
 
-function createCell(item,showZhuyin,cellSize,charMode,fontColor,opacity){
-  if(!item){item={char:"",blank:true};}
+function createCell(item,cellSize,fontColor,opacity){
+  if(!item){item={char:"",mode:"both"};}
 
   const ch=item.char || "";
-  const z=showZhuyin==="yes" && ch ? getZhuyin(ch) : "";
+  const mode=item.mode;
+  let showChar=true;
+  let showZhuyin=true;
+  let charOpacity=1;
+
+  if(mode==="charOnly"){
+    showChar=true;
+    showZhuyin=false;
+  }
+
+  if(mode==="zhuyinOnly"){
+    showChar=false;
+    showZhuyin=true;
+  }
+
+  if(mode==="hideChar"){
+    showChar=false;
+    showZhuyin=true;
+  }
+
+  if(mode==="hideZhuyin"){
+    showChar=true;
+    showZhuyin=false;
+  }
+
+  if(mode==="trace"){
+    showChar=true;
+    showZhuyin=true;
+    charOpacity=opacity;
+  }
+
+  const z=showZhuyin && ch ? getZhuyin(ch) : "";
   const fontSize=cellSize*0.55;
-
-  let displayClass="sampleChar";
-  let style=`color:${fontColor};opacity:${opacity};`;
-
-  if(charMode==="show"){
-    style=`color:${fontColor};opacity:1;`;
-  }
-
-  if(charMode==="trace"){
-    style=`color:${fontColor};opacity:${opacity};`;
-  }
-
-  if(charMode==="hide" || item.blank){
-    displayClass="hiddenChar";
-  }
+  const displayClass=showChar ? "sampleChar" : "hiddenChar";
+  const style=`color:${fontColor};opacity:${charOpacity};`;
 
   return `
     <div class="cell">
@@ -341,7 +349,10 @@ function createCell(item,showZhuyin,cellSize,charMode,fontColor,opacity){
   `;
 }
 
-["words","gridSize","mode","repeatCount","showZhuyin","charMode","opacity"].forEach(id=>{
+[
+"words","gridSize","normalMode","zhuyinOnlyChars","charOnlyChars",
+"traceChars","hideCharChars","hideZhuyinChars","opacity"
+].forEach(id=>{
   document.getElementById(id).addEventListener("input",generateBook);
   document.getElementById(id).addEventListener("change",generateBook);
 });
