@@ -6,106 +6,34 @@
 <title>穎橙 AI 智慧學習</title>
 
 <style>
-body{
-  margin:0;
-  font-family:"Microsoft JhengHei",Arial,sans-serif;
-  background:#f4f7fb;
-  color:#1f2937;
-}
-header{
-  background:linear-gradient(90deg,#2563eb,#f97316);
-  color:white;
-  padding:32px 20px;
-  text-align:center;
-}
-.container{
-  display:flex;
-  gap:20px;
-  padding:20px;
-}
-.panel{
-  background:white;
-  border-radius:14px;
-  padding:22px;
-  box-shadow:0 3px 12px rgba(0,0,0,.08);
-}
-.left{width:340px;}
+body{margin:0;font-family:"Microsoft JhengHei",Arial,sans-serif;background:#f4f7fb;color:#1f2937;}
+header{background:linear-gradient(90deg,#2563eb,#f97316);color:white;padding:30px 20px;text-align:center;}
+.container{display:flex;gap:20px;padding:20px;}
+.panel{background:white;border-radius:14px;padding:22px;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.left{width:360px;}
 .right{flex:1;}
-label{
-  display:block;
-  margin-top:14px;
-  font-weight:bold;
-}
-select,input{
-  width:100%;
-  padding:10px;
-  margin-top:6px;
-  font-size:15px;
-  box-sizing:border-box;
-}
-button{
-  width:100%;
-  padding:13px;
-  margin-top:18px;
-  border:none;
-  border-radius:9px;
-  color:white;
-  font-weight:bold;
-  font-size:16px;
-  cursor:pointer;
-}
+label{display:block;margin-top:14px;font-weight:bold;}
+select,input{width:100%;padding:10px;margin-top:6px;font-size:15px;box-sizing:border-box;}
+.checkboxBox{background:#f8fafc;border:1px solid #ddd;padding:10px;margin-top:8px;border-radius:8px;}
+.checkboxBox label{font-weight:normal;margin:8px 0;}
+.checkboxBox input{width:auto;margin-right:6px;}
+button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;color:white;font-weight:bold;font-size:16px;cursor:pointer;}
 .generate{background:#2563eb;}
 .answer{background:#16a34a;}
 .print{background:#f97316;}
-
-.paper{
-  margin-top:15px;
-  background:white;
-  border:1px solid #ddd;
-  padding:28px;
-  min-height:650px;
-  line-height:1.9;
-  font-size:18px;
-}
-.paper h2{
-  text-align:center;
-}
-.info{
-  display:flex;
-  justify-content:space-between;
-  margin:18px 0 25px;
-}
-.question{
-  margin-bottom:20px;
-}
-.options{
-  margin-left:20px;
-}
-.answerBox{
-  margin-top:25px;
-  padding:15px;
-  background:#f0fdf4;
-  border:1px solid #86efac;
-  display:none;
-}
+.paper{margin-top:15px;background:white;border:1px solid #ddd;padding:28px;min-height:650px;line-height:1.9;font-size:18px;}
+.paper h2{text-align:center;}
+.info{display:flex;justify-content:space-between;margin:18px 0 25px;}
+.question{margin-bottom:22px;}
+.options{margin-left:20px;}
+.answerBox{margin-top:25px;padding:15px;background:#f0fdf4;border:1px solid #86efac;display:none;}
 
 @media print{
-  header,.left,.right h2{
-    display:none;
-  }
+  header,.left,.right h2{display:none;}
   body{background:white;}
-  .container{
-    display:block;
-    padding:0;
-  }
-  .right{
-    box-shadow:none;
-    padding:0;
-  }
-  .paper{
-    border:none;
-    padding:20px;
-  }
+  .container{display:block;padding:0;}
+  .right{box-shadow:none;padding:0;}
+  .paper{border:none;padding:20px;}
 }
 </style>
 </head>
@@ -114,7 +42,7 @@ button{
 
 <header>
   <h1>穎橙 AI 智慧學習</h1>
-  <p>國小考卷自動生成・單元式素養題練習平台</p>
+  <p>國小考卷自動生成・多單元混合出題平台</p>
 </header>
 
 <div class="container">
@@ -154,16 +82,15 @@ button{
   <option>下學期</option>
 </select>
 
-<label>單元</label>
-<select id="unit"></select>
+<label>單元（可複選）</label>
+<div id="unitBox" class="checkboxBox"></div>
 
-<label>題型</label>
-<select id="type">
-  <option>選擇題</option>
-  <option>填充題</option>
-  <option>應用題</option>
-  <option selected>混合題</option>
-</select>
+<label>題型（可複選）</label>
+<div class="checkboxBox">
+  <label><input type="checkbox" name="qtype" value="選擇題" checked>選擇題</label>
+  <label><input type="checkbox" name="qtype" value="填充題" checked>填充題</label>
+  <label><input type="checkbox" name="qtype" value="應用題" checked>應用題</label>
+</div>
 
 <label>難度</label>
 <select id="level">
@@ -173,7 +100,7 @@ button{
 </select>
 
 <label>題數</label>
-<input id="count" type="number" value="8" min="1" max="20">
+<input id="count" type="number" value="10" min="1" max="30">
 
 <button class="generate" onclick="generatePaper()">產生考卷</button>
 <button class="answer" onclick="toggleAnswer()">顯示／隱藏答案</button>
@@ -184,7 +111,7 @@ button{
 <div class="panel right">
   <h2>考卷預覽</h2>
   <div id="paper" class="paper">
-    請先選擇年級、科目、學期與單元，再按「產生考卷」。
+    請選擇年級、科目、學期、單元與題型，再按「產生考卷」。
   </div>
 </div>
 
@@ -219,80 +146,134 @@ const units = {
     "第3單元 分數加減",
     "第4單元 面積",
     "第5單元 小數"
-  ],
-  "一年級-國語-上學期":[
-    "第1單元 注音符號",
-    "第2單元 國字認讀",
-    "第3單元 詞語練習"
-  ],
-  "二年級-國語-上學期":[
-    "第1單元 生字",
-    "第2單元 造詞",
-    "第3單元 閱讀理解"
   ]
 };
 
-const questionBank = {
-  "第1單元 2位數的加減":[
-    ["小明有 35 元，媽媽又給他 24 元。現在小明一共有多少元？",["① 49元","② 59元","③ 69元","④ 79元"],"②"],
-    ["小美有 68 顆貼紙，送給同學 25 顆後，還剩下幾顆？",["① 33顆","② 43顆","③ 53顆","④ 63顆"],"②"],
-    ["哥哥有 47 張卡片，弟弟有 32 張卡片，兩人合起來有幾張？",["① 69張","② 79張","③ 89張","④ 99張"],"②"],
-    ["書架上有 56 本書，借出了 21 本，書架上還有幾本？",["① 25本","② 35本","③ 45本","④ 55本"],"②"]
-  ],
-  "第2單元 2步驟的加減":[
-    ["小華有 30 元，爸爸給他 20 元，他又買了 15 元的橡皮擦。小華還剩多少元？",["① 25元","② 35元","③ 45元","④ 50元"],"②"],
-    ["教室裡原有 28 人，又進來 12 人，後來有 9 人離開。現在教室有幾人？",["① 21人","② 31人","③ 41人","④ 49人"],"②"],
-    ["水果店有 45 顆蘋果，上午賣出 18 顆，下午又進貨 20 顆。現在有幾顆？",["① 37顆","② 47顆","③ 57顆","④ 67顆"],"②"]
-  ],
-  "第3單元 分分看":[
-    ["老師有 12 顆糖果，要平均分給 4 位小朋友，每人可以分到幾顆？",["① 2顆","② 3顆","③ 4顆","④ 6顆"],"②"],
-    ["媽媽買了 15 顆橘子，每 5 顆裝成一袋，可以裝成幾袋？",["① 2袋","② 3袋","③ 4袋","④ 5袋"],"②"],
-    ["有 18 枝鉛筆，平均分給 6 位同學，每人可以分到幾枝？",["① 2枝","② 3枝","③ 4枝","④ 6枝"],"②"]
-  ]
-};
+const questionBank = [
+  {
+    unit:"第1單元 2位數的加減",
+    type:"選擇題",
+    q:"小明有 35 元，媽媽又給他 24 元。現在小明一共有多少元？",
+    options:["① 49元","② 59元","③ 69元","④ 79元"],
+    answer:"②"
+  },
+  {
+    unit:"第1單元 2位數的加減",
+    type:"填充題",
+    q:"小美有 68 顆貼紙，送給同學 25 顆後，還剩下 ______ 顆。",
+    answer:"43"
+  },
+  {
+    unit:"第1單元 2位數的加減",
+    type:"應用題",
+    q:"哥哥有 47 張卡片，弟弟有 32 張卡片。請問兩人合起來有幾張卡片？",
+    answer:"79張"
+  },
+  {
+    unit:"第2單元 2步驟的加減",
+    type:"選擇題",
+    q:"小華有 30 元，爸爸給他 20 元，他又買了 15 元的橡皮擦。小華還剩多少元？",
+    options:["① 25元","② 35元","③ 45元","④ 50元"],
+    answer:"②"
+  },
+  {
+    unit:"第2單元 2步驟的加減",
+    type:"填充題",
+    q:"教室裡原有 28 人，又進來 12 人，後來有 9 人離開。現在教室有 ______ 人。",
+    answer:"31"
+  },
+  {
+    unit:"第2單元 2步驟的加減",
+    type:"應用題",
+    q:"水果店有 45 顆蘋果，上午賣出 18 顆，下午又進貨 20 顆。現在水果店有幾顆蘋果？",
+    answer:"47顆"
+  },
+  {
+    unit:"第3單元 分分看",
+    type:"選擇題",
+    q:"老師有 12 顆糖果，要平均分給 4 位小朋友，每人可以分到幾顆？",
+    options:["① 2顆","② 3顆","③ 4顆","④ 6顆"],
+    answer:"②"
+  },
+  {
+    unit:"第3單元 分分看",
+    type:"填充題",
+    q:"媽媽買了 15 顆橘子，每 5 顆裝成一袋，可以裝成 ______ 袋。",
+    answer:"3"
+  },
+  {
+    unit:"第3單元 分分看",
+    type:"應用題",
+    q:"有 18 枝鉛筆，要平均分給 6 位同學。每位同學可以分到幾枝鉛筆？",
+    answer:"3枝"
+  }
+];
 
 function updateUnits(){
-  const grade = document.getElementById("grade").value;
-  const subject = document.getElementById("subject").value;
-  const semester = document.getElementById("semester").value;
-  const key = grade + "-" + subject + "-" + semester;
-  const unitSelect = document.getElementById("unit");
+  const grade=document.getElementById("grade").value;
+  const subject=document.getElementById("subject").value;
+  const semester=document.getElementById("semester").value;
+  const key=grade+"-"+subject+"-"+semester;
+  const box=document.getElementById("unitBox");
 
-  unitSelect.innerHTML = "";
+  box.innerHTML="";
 
-  let list = units[key] || ["尚未建立此年級科目的單元"];
+  const list=units[key] || ["尚未建立此年級科目的單元"];
 
-  list.forEach(u=>{
-    let option = document.createElement("option");
-    option.textContent = u;
-    unitSelect.appendChild(option);
+  list.forEach((u,index)=>{
+    box.innerHTML += `
+      <label>
+        <input type="checkbox" name="unit" value="${u}" ${index<3 ? "checked" : ""}>
+        ${u}
+      </label>
+    `;
   });
 }
 
+function getCheckedValues(name){
+  return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(x=>x.value);
+}
+
 function generatePaper(){
-  const grade = document.getElementById("grade").value;
-  const subject = document.getElementById("subject").value;
-  const version = document.getElementById("version").value;
-  const semester = document.getElementById("semester").value;
-  const unit = document.getElementById("unit").value;
-  const type = document.getElementById("type").value;
-  const level = document.getElementById("level").value;
-  const count = Number(document.getElementById("count").value);
+  const grade=document.getElementById("grade").value;
+  const subject=document.getElementById("subject").value;
+  const version=document.getElementById("version").value;
+  const semester=document.getElementById("semester").value;
+  const level=document.getElementById("level").value;
+  const count=Number(document.getElementById("count").value);
 
-  let questions = questionBank[unit];
+  const selectedUnits=getCheckedValues("unit");
+  const selectedTypes=getCheckedValues("qtype");
 
-  if(!questions){
-    document.getElementById("paper").innerHTML =
-    `<h2>${grade}${subject}測驗卷</h2>
-     <p>目前「${unit}」尚未建立題庫。</p>
-     <p>請先選擇二年級數學的「第1單元、第2單元、第3單元」測試。</p>`;
+  if(selectedUnits.length===0){
+    alert("請至少選擇一個單元");
     return;
   }
 
-  let html = `
+  if(selectedTypes.length===0){
+    alert("請至少選擇一種題型");
+    return;
+  }
+
+  let questions=questionBank.filter(q =>
+    selectedUnits.includes(q.unit) && selectedTypes.includes(q.type)
+  );
+
+  if(questions.length===0){
+    document.getElementById("paper").innerHTML =
+    `<h2>${grade}${subject}測驗卷</h2>
+     <p>目前選擇的單元與題型尚未建立題庫。</p>
+     <p>請先測試：二年級／數學／上學期／第1至第3單元。</p>`;
+    return;
+  }
+
+  let html=`
     <h2>${grade}${subject}測驗卷</h2>
     <div style="text-align:center;">
-      ${version}｜${semester}｜${unit}｜${type}｜${level}
+      ${version}｜${semester}｜${level}
+    </div>
+    <div style="text-align:center;font-size:15px;">
+      範圍：${selectedUnits.join("、")}
     </div>
 
     <div class="info">
@@ -300,23 +281,23 @@ function generatePaper(){
       <span>班級：__________</span>
       <span>座號：__________</span>
     </div>
-
-    <b>一、選擇題</b>
   `;
 
-  let answerText = "";
+  let answerText="";
 
   for(let i=0;i<count;i++){
-    let q = questions[i % questions.length];
+    let q=questions[i % questions.length];
 
-    html += `
-      <div class="question">
-        <p>${i+1}. ${q[0]}</p>
-        <div class="options">${q[1].join("<br>")}</div>
-      </div>
-    `;
+    html += `<div class="question">
+      <p>${i+1}.【${q.type}】${q.q}</p>`;
 
-    answerText += `${i+1}. ${q[2]}　`;
+    if(q.options){
+      html += `<div class="options">${q.options.join("<br>")}</div>`;
+    }
+
+    html += `</div>`;
+
+    answerText += `${i+1}. ${q.answer}　`;
   }
 
   html += `
@@ -325,16 +306,16 @@ function generatePaper(){
     </div>
   `;
 
-  document.getElementById("paper").innerHTML = html;
+  document.getElementById("paper").innerHTML=html;
 }
 
 function toggleAnswer(){
-  const box = document.getElementById("answerBox");
+  const box=document.getElementById("answerBox");
   if(!box){
     alert("請先產生考卷");
     return;
   }
-  box.style.display = box.style.display === "block" ? "none" : "block";
+  box.style.display = box.style.display==="block" ? "none" : "block";
 }
 
 updateUnits();
