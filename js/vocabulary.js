@@ -179,7 +179,11 @@ function loadWork(){
 }
 function clearWork(){
   if(confirm("確定清除本機記憶？")){
-    localStorage.removeItem(STORAGE_KEY);cellData=[];document.getElementById("preview").innerHTML="";
+    localStorage.removeItem(STORAGE_KEY);
+    cellData=[];
+    document.getElementById("words").value="黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細";
+    document.getElementById("defaultMode").value="both";
+    generateBook();
   }
 }
 
