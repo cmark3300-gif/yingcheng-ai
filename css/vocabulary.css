@@ -9,48 +9,166 @@ button.secondary{background:#64748b;}
 button.danger{background:#dc2626;}
 button.green{background:#0f766e;}
 
-.paper-wrap{overflow:auto;background:#e5e7eb;padding:10px;}
-.page{width:210mm;height:297mm;background:white;margin:0 auto 16px;padding:7mm;box-sizing:border-box;}
+.paper-wrap{
+  overflow:auto;
+  background:#e5e7eb;
+  padding:12px;
+}
+
+.page{
+  width:max-content;
+  min-height:297mm;
+  background:white;
+  margin:0 auto 16px;
+  padding:8mm;
+  box-sizing:border-box;
+}
+
 .grid{
   display:grid;
-  grid-template-columns:repeat(10, 20mm);
-  grid-template-rows:repeat(10, 18mm);
+  grid-template-columns:repeat(10, 24mm);
+  grid-template-rows:repeat(10, 20mm);
   justify-content:center;
   direction:rtl;
 }
+
 .word-cell{
-  width:20mm;height:18mm;display:flex;flex-direction:row-reverse;box-sizing:border-box;
+  width:24mm;
+  height:20mm;
+  display:flex;
+  flex-direction:row-reverse;
+  box-sizing:border-box;
 }
+
 .char-grid{
-  width:16mm;height:16mm;position:relative;border:1.2px solid #2563eb;box-sizing:border-box;background:white;
+  width:18mm;
+  height:18mm;
+  position:relative;
+  border:1.4px solid #2563eb;
+  box-sizing:border-box;
+  background:white;
 }
-.char-grid::before{content:"";position:absolute;left:50%;top:0;height:100%;border-left:1px dashed #7db4ff;}
-.char-grid::after{content:"";position:absolute;top:50%;left:0;width:100%;border-top:1px dashed #7db4ff;}
-.diag1,.diag2{position:absolute;width:142%;border-top:1px dashed #bcd7ff;left:-21%;top:50%;}
+
+.char-grid::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:0;
+  height:100%;
+  border-left:1px dashed #7db4ff;
+}
+
+.char-grid::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  left:0;
+  width:100%;
+  border-top:1px dashed #7db4ff;
+}
+
+.diag1,.diag2{
+  position:absolute;
+  width:142%;
+  border-top:1px dashed #bcd7ff;
+  left:-21%;
+  top:50%;
+}
+
 .diag1{transform:rotate(45deg);}
 .diag2{transform:rotate(-45deg);}
-.char-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:34px;font-family:"標楷體","DFKai-SB","BiauKai","KaiTi",serif;}
+
+.char-text{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:42px;
+  line-height:1;
+  font-family:"標楷體","DFKai-SB","BiauKai","KaiTi",serif;
+  color:#111827;
+}
 
 .zhuyin-grid{
-  width:4mm;height:16mm;border:1.2px solid #2563eb;border-left:none;position:relative;box-sizing:border-box;background:white;
-  font-family:"標楷體","DFKai-SB","BiauKai","KaiTi",serif;font-weight:900;color:#000;
+  width:6mm;
+  height:18mm;
+  border:1.4px solid #2563eb;
+  border-left:none;
+  position:relative;
+  box-sizing:border-box;
+  background:white;
+  font-family:"標楷體","DFKai-SB","BiauKai","KaiTi",serif;
+  font-weight:900;
+  color:#000;
 }
-.z-base span{position:absolute;left:38%;transform:translate(-50%,-50%);font-size:14px;font-weight:900;}
-.z-tone{position:absolute;right:1px;transform:translateY(-50%);font-size:13px;font-weight:900;}
 
-.status{position:absolute;left:1px;bottom:0;font-size:9px;color:#2563eb;background:white;}
+.z-base span{
+  position:absolute;
+  left:42%;
+  transform:translate(-50%,-50%);
+  font-size:17px;
+  line-height:1;
+  font-weight:900;
+  color:#000;
+}
+
+.z-tone{
+  position:absolute;
+  right:1.5px;
+  transform:translateY(-50%);
+  font-size:16px;
+  line-height:1;
+  font-weight:900;
+  color:#000;
+}
+
+.status{
+  position:absolute;
+  left:1px;
+  bottom:0;
+  font-size:9px;
+  color:#2563eb;
+  background:white;
+}
 
 @media screen and (max-width:768px){
   main{padding:8px;}
-  .page{margin:0;width:max-content;height:auto;min-height:297mm;}
-  .paper-wrap{overflow:auto;-webkit-overflow-scrolling:touch;}
-  button{width:100%;margin:5px 0;font-size:17px;}
+  .page{
+    margin:0;
+    width:max-content;
+    min-height:auto;
+    padding:6mm;
+  }
+  .paper-wrap{
+    overflow:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  button{
+    width:100%;
+    margin:5px 0;
+    font-size:17px;
+  }
 }
 
 @media print{
-  header,.panel{display:none!important;}
+  header,.panel{
+    display:none!important;
+  }
   main{padding:0;}
   body{background:white;}
-  .paper-wrap{padding:0;background:white;overflow:visible;}
-  .page{margin:0;width:210mm;height:297mm;page-break-after:always;}
+  .paper-wrap{
+    padding:0;
+    background:white;
+    overflow:visible;
+  }
+  .page{
+    margin:0;
+    width:210mm;
+    height:297mm;
+    padding:6mm;
+    page-break-after:always;
+    transform:scale(.88);
+    transform-origin:top left;
+  }
 }
