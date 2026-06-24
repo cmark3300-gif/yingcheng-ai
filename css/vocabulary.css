@@ -148,15 +148,26 @@ button.green{background:#0f766e;}
   color:#000;
 }
 
-.z-base > span:not(.tone-mark){
+.zhuyin-symbol{
   position:absolute;
-  left:45%;
+  left:42%;
   transform:translate(-50%,-50%);
-  font-size:16px;
+  font-size:18px;
   line-height:1;
   font-weight:900;
   color:#000;
 }
+
+.tone-mark{
+  position:absolute;
+  left:78% !important;
+  transform:translate(-50%,-50%);
+  font-size:14px;
+  line-height:1;
+  font-weight:900;
+  color:#000;
+}
+
 
 .status{
   position:absolute;
@@ -219,13 +230,4 @@ button.green{background:#0f766e;}
     transform:scale(.88);
     transform-origin:top left;
   }
-}
-.tone-mark{
-  position:absolute;
-  left:78% !important;
-  transform:translate(-50%,-50%);
-  font-size:14px;
-  line-height:1;
-  font-weight:900;
-  color:#000;
 }
