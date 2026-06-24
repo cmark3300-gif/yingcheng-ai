@@ -33,7 +33,7 @@ button.green{background:#0f766e;}
 }
 
 .word-cell{
-  width:2mm;
+  width:26mm;
   height:20mm;
   display:flex;
   flex-direction:row-reverse;
