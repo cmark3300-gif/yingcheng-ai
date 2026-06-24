@@ -3,34 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>生字簿產生器 V7｜穎橙 AI 智慧學習</title>
+<title>生字簿產生器 V8-A｜穎橙 AI 智慧學習</title>
 
 <style>
 body{margin:0;font-family:"Microsoft JhengHei",Arial,sans-serif;background:#f4f7fb;color:#1f2937;}
-header{background:linear-gradient(90deg,#2563eb,#f97316);color:white;padding:22px 15px;text-align:center;}
-header h1{margin:0;font-size:28px;}
+header{background:linear-gradient(90deg,#2563eb,#f97316);color:white;padding:20px 12px;text-align:center;}
+header h1{margin:0;font-size:26px;}
 header p{margin:8px 0 0;}
 
-.container{display:flex;gap:20px;padding:20px;}
-.panel{background:white;border-radius:14px;padding:22px;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.container{display:flex;gap:16px;padding:16px;}
+.panel{background:white;border-radius:14px;padding:18px;box-shadow:0 3px 12px rgba(0,0,0,.08);}
 .left{width:390px;}
 .right{flex:1;min-width:0;}
 
-label{display:block;margin-top:14px;font-weight:bold;}
+label{display:block;margin-top:12px;font-weight:bold;}
 textarea,select,input{width:100%;box-sizing:border-box;padding:11px;margin-top:6px;font-size:16px;}
-button{width:100%;padding:14px;margin-top:18px;border:none;border-radius:9px;color:white;font-weight:bold;font-size:17px;cursor:pointer;}
+button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;color:white;font-weight:bold;font-size:17px;cursor:pointer;}
 .generate{background:#2563eb;}
+.blankBtn{background:#0f766e;}
+.clearBtn{background:#64748b;}
 .print{background:#f97316;}
 .note{font-size:14px;color:#6b7280;margin-top:10px;line-height:1.6;}
 
-.paper{background:#e5e7eb;padding:20px;min-height:650px;overflow:auto;}
+.paper{background:#e5e7eb;padding:12px;min-height:650px;overflow:auto;}
 
 .page{
   width:210mm;
-  min-height:297mm;
+  height:297mm;
   background:white;
   margin:0 auto 20px auto;
-  padding:12mm;
+  padding:10mm;
   box-sizing:border-box;
   page-break-after:always;
   display:flex;
@@ -40,13 +42,15 @@ button{width:100%;padding:14px;margin-top:18px;border:none;border-radius:9px;col
 
 .grid{
   display:grid;
-  border-top:1.5px solid #333;
-  border-left:1.5px solid #333;
+  grid-template-columns:repeat(10, 18mm);
+  grid-template-rows:repeat(10, 18mm);
+  border-top:1.7px solid #111;
+  border-left:1.7px solid #111;
 }
 
 .cell{
-  border-right:1.5px solid #333;
-  border-bottom:1.5px solid #333;
+  border-right:1.7px solid #111;
+  border-bottom:1.7px solid #111;
   position:relative;
   display:flex;
   flex-direction:row-reverse;
@@ -62,17 +66,18 @@ button{width:100%;padding:14px;margin-top:18px;border:none;border-radius:9px;col
 .zhuyinBox{
   width:36%;
   height:100%;
-  border-left:1px solid #999;
+  border-left:1.2px solid #111;
   position:relative;
   box-sizing:border-box;
-  color:#111827;
+  color:#000;
   font-family:"Microsoft JhengHei",Arial,sans-serif;
+  font-weight:700;
 }
 
 .zhuyinBase{
   position:absolute;
   top:50%;
-  left:45%;
+  left:42%;
   transform:translate(-50%,-50%);
   writing-mode:vertical-rl;
   text-orientation:upright;
@@ -84,9 +89,10 @@ button{width:100%;padding:14px;margin-top:18px;border:none;border-radius:9px;col
 .zhuyinTone{
   position:absolute;
   right:2px;
-  top:53%;
+  top:58%;
   transform:translateY(-50%);
-  font-size:.82em;
+  font-size:.85em;
+  font-weight:900;
   line-height:1;
 }
 
@@ -98,7 +104,7 @@ button{width:100%;padding:14px;margin-top:18px;border:none;border-radius:9px;col
   align-items:center;
   justify-content:center;
   box-sizing:border-box;
-  font-family:"標楷體","DFKai-SB","Microsoft JhengHei",serif;
+  font-family:"標楷體","DFKai-SB","BiauKai","KaiTi","Microsoft JhengHei",serif;
 }
 
 .charBox::before{
@@ -107,7 +113,7 @@ button{width:100%;padding:14px;margin-top:18px;border:none;border-radius:9px;col
   top:0;
   left:50%;
   height:100%;
-  border-left:1px dashed #9ca3af;
+  border-left:1px dashed #93c5fd;
 }
 
 .charBox::after{
@@ -116,13 +122,13 @@ button{width:100%;padding:14px;margin-top:18px;border:none;border-radius:9px;col
   left:0;
   top:50%;
   width:100%;
-  border-top:1px dashed #9ca3af;
+  border-top:1px dashed #93c5fd;
 }
 
 .diagonal1,.diagonal2{
   position:absolute;
   width:120%;
-  border-top:1px dashed #cbd5e1;
+  border-top:1px dashed #bfdbfe;
   top:50%;
   left:-10%;
 }
@@ -146,27 +152,14 @@ button{width:100%;padding:14px;margin-top:18px;border:none;border-radius:9px;col
 .row2 input[type="color"]{height:42px;padding:2px;}
 
 @media screen and (max-width:768px){
-  header h1{font-size:24px;}
-  .container{
-    display:block;
-    padding:10px;
-  }
-  .panel{
-    padding:15px;
-    margin-bottom:12px;
-  }
-  .left{
-    width:auto;
-  }
-  textarea{
-    min-height:120px;
-  }
-  button{
-    font-size:18px;
-    padding:15px;
-  }
+  header h1{font-size:22px;}
+  .container{display:block;padding:10px;}
+  .panel{padding:14px;margin-bottom:12px;}
+  .left{width:auto;}
+  textarea{min-height:120px;}
+  button{font-size:18px;padding:15px;}
   .paper{
-    padding:10px;
+    padding:8px;
     overflow:auto;
     -webkit-overflow-scrolling:touch;
   }
@@ -174,12 +167,8 @@ button{width:100%;padding:14px;margin-top:18px;border:none;border-radius:9px;col
     margin:0 0 15px 0;
     transform-origin:top left;
   }
-  .right h2{
-    font-size:20px;
-  }
-  .note{
-    font-size:15px;
-  }
+  .right h2{font-size:20px;}
+  .note{font-size:15px;}
 }
 
 @media print{
@@ -204,7 +193,7 @@ button{width:100%;padding:14px;margin-top:18px;border:none;border-radius:9px;col
 
 <header>
   <h1>穎橙 AI 智慧學習</h1>
-  <p>生字簿產生器 V7｜手機版＋注音聲調修正版</p>
+  <p>生字簿產生器 V8-A｜10×10固定版＋手機可用＋本機記憶</p>
 </header>
 
 <div class="container">
@@ -213,13 +202,6 @@ button{width:100%;padding:14px;margin-top:18px;border:none;border-radius:9px;col
 
 <label>輸入詞語或句子</label>
 <textarea id="words" rows="6">黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細</textarea>
-
-<label>表格大小</label>
-<select id="gridSize">
-  <option value="8">8 × 8</option>
-  <option value="10" selected>10 × 10</option>
-  <option value="12">12 × 12</option>
-</select>
 
 <label>預設顯示模式</label>
 <select id="defaultMode">
@@ -246,11 +228,14 @@ button{width:100%;padding:14px;margin-top:18px;border:none;border-radius:9px;col
 </select>
 
 <button class="generate" onclick="generateBook()">產生生字簿</button>
+<button class="blankBtn" onclick="generateBlankBook()">產生空白 10×10 生字簿</button>
+<button class="clearBtn" onclick="clearLocalMemory()">清除本機記憶</button>
 <button class="print" onclick="window.print()">列印／另存 PDF</button>
 
 <p class="note">
 手機可直接點方格切換：全 → 音 → 字 → 描 → 空。<br>
-注音聲調已改成獨立靠右顯示，比較接近正式注音欄。
+本頁會自動記住此裝置最後一次內容與方格狀態。不同手機、不同電腦各自保存。<br>
+V8-A 先完成版面、空白簿、本機記憶與貼新字錯誤修正。
 </p>
 
 </div>
@@ -263,6 +248,8 @@ button{width:100%;padding:14px;margin-top:18px;border:none;border-radius:9px;col
 </div>
 
 <script>
+const STORAGE_KEY = "yingcheng_vocabulary_v8a";
+
 const zhuyinMap = {
   "黃":"ㄏㄨㄤˊ","狗":"ㄍㄡˇ","公":"ㄍㄨㄥ","雞":"ㄐㄧ",
   "經":"ㄐㄧㄥ","過":"ㄍㄨㄛˋ","奇":"ㄑㄧˊ","怪":"ㄍㄨㄞˋ",
@@ -293,16 +280,62 @@ function cleanText(text){
 function splitZhuyin(z){
   const toneMarks=["ˊ","ˇ","ˋ","˙"];
   let tone="";
-  let base=z;
+  let base=z || "";
 
   toneMarks.forEach(t=>{
-    if(z.includes(t)){
+    if(base.includes(t)){
       tone=t;
-      base=z.replace(t,"");
+      base=base.replace(t,"");
     }
   });
 
   return {base,tone};
+}
+
+function saveLocalMemory(){
+  const data = {
+    words: document.getElementById("words").value,
+    defaultMode: document.getElementById("defaultMode").value,
+    fontColor: document.getElementById("fontColorText").value,
+    opacity: document.getElementById("opacity").value,
+    cellData: cellData
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function loadLocalMemory(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return false;
+
+    const data = JSON.parse(raw);
+
+    if(data.words) document.getElementById("words").value = data.words;
+    if(data.defaultMode) document.getElementById("defaultMode").value = data.defaultMode;
+    if(data.fontColor){
+      document.getElementById("fontColorText").value = data.fontColor;
+      document.getElementById("fontColor").value = data.fontColor;
+    }
+    if(data.opacity) document.getElementById("opacity").value = data.opacity;
+
+    if(Array.isArray(data.cellData)){
+      cellData = data.cellData;
+      redrawBook();
+      return true;
+    }
+  }catch(e){
+    console.warn("本機記憶讀取失敗，已重新產生。", e);
+  }
+  return false;
+}
+
+function clearLocalMemory(){
+  if(confirm("確定要清除此裝置的本機記憶嗎？")){
+    localStorage.removeItem(STORAGE_KEY);
+    cellData = [];
+    document.getElementById("words").value = "";
+    document.getElementById("paper").innerHTML = "";
+  }
 }
 
 document.getElementById("fontColor").addEventListener("input",function(){
@@ -311,20 +344,26 @@ document.getElementById("fontColor").addEventListener("input",function(){
 });
 
 document.getElementById("fontColorText").addEventListener("input",function(){
-  document.getElementById("fontColor").value=this.value;
+  if(/^#[0-9A-Fa-f]{6}$/.test(this.value)){
+    document.getElementById("fontColor").value=this.value;
+  }
   redrawBook();
 });
 
 function generateBook(){
-  const text=cleanText(document.getElementById("words").value);
-  const defaultMode=document.getElementById("defaultMode").value;
+  const text = cleanText(document.getElementById("words").value);
+  const defaultMode = document.getElementById("defaultMode").value;
+
+  cellData = [];
 
   if(!text){
     alert("請先輸入文字");
+    document.getElementById("paper").innerHTML = "";
+    saveLocalMemory();
     return;
   }
 
-  cellData=[...text].map(ch=>({
+  cellData = [...text].map(ch=>({
     char:ch,
     zhuyin:getZhuyin(ch),
     mode:defaultMode
@@ -333,47 +372,57 @@ function generateBook(){
   redrawBook();
 }
 
-function redrawBook(){
-  if(cellData.length===0){
-    generateBook();
-    return;
+function generateBlankBook(){
+  cellData = [];
+
+  for(let i=0;i<100;i++){
+    cellData.push({
+      char:"",
+      zhuyin:"",
+      mode:"blank"
+    });
   }
 
-  const gridSize=Number(document.getElementById("gridSize").value);
-  const cellsPerPage=gridSize*gridSize;
-  const pages=[];
+  redrawBook();
+}
+
+function redrawBook(){
+  const cellsPerPage = 100;
+  const pages = [];
+
+  if(cellData.length === 0){
+    document.getElementById("paper").innerHTML = "";
+    saveLocalMemory();
+    return;
+  }
 
   for(let i=0;i<cellData.length;i+=cellsPerPage){
     pages.push(cellData.slice(i,i+cellsPerPage));
   }
 
-  const cellSize=gridSize===8 ? 22 : gridSize===10 ? 18 : 15;
-
-  let html="";
+  const cellSize = 18;
+  let html = "";
 
   pages.forEach((pageItems,pageIndex)=>{
-    html+=`
+    html += `
       <div class="page">
-        <div class="grid"
-          style="
-            grid-template-columns:repeat(${gridSize}, ${cellSize}mm);
-            grid-template-rows:repeat(${gridSize}, ${cellSize}mm);
-          ">
+        <div class="grid">
     `;
 
-    for(let r=0;r<gridSize;r++){
-      for(let c=0;c<gridSize;c++){
-        const indexInPage=c*gridSize+r;
-        const globalIndex=pageIndex*cellsPerPage+indexInPage;
-        const item=pageItems[indexInPage];
-        html+=createCell(item,cellSize,globalIndex);
+    for(let r=0;r<10;r++){
+      for(let c=0;c<10;c++){
+        const indexInPage = c*10+r;
+        const globalIndex = pageIndex*cellsPerPage+indexInPage;
+        const item = pageItems[indexInPage];
+        html += createCell(item, cellSize, globalIndex);
       }
     }
 
-    html+=`</div></div>`;
+    html += `</div></div>`;
   });
 
-  document.getElementById("paper").innerHTML=html;
+  document.getElementById("paper").innerHTML = html;
+  saveLocalMemory();
 }
 
 function createCell(item,cellSize,index){
@@ -381,22 +430,22 @@ function createCell(item,cellSize,index){
     return emptyCell();
   }
 
-  const fontColor=document.getElementById("fontColorText").value || "#111827";
-  const opacity=document.getElementById("opacity").value;
+  const fontColor = document.getElementById("fontColorText").value || "#111827";
+  const opacity = document.getElementById("opacity").value;
 
-  let showChar=true;
-  let showZhuyin=true;
-  let charOpacity=1;
-  let tag="全";
+  let showChar = true;
+  let showZhuyin = true;
+  let charOpacity = 1;
+  let tag = "全";
 
-  if(item.mode==="zhuyinOnly"){showChar=false;showZhuyin=true;tag="音";}
-  if(item.mode==="charOnly"){showChar=true;showZhuyin=false;tag="字";}
-  if(item.mode==="trace"){showChar=true;showZhuyin=true;charOpacity=opacity;tag="描";}
-  if(item.mode==="blank"){showChar=false;showZhuyin=false;tag="空";}
+  if(item.mode === "zhuyinOnly"){showChar=false;showZhuyin=true;tag="音";}
+  if(item.mode === "charOnly"){showChar=true;showZhuyin=false;tag="字";}
+  if(item.mode === "trace"){showChar=true;showZhuyin=true;charOpacity=opacity;tag="描";}
+  if(item.mode === "blank"){showChar=false;showZhuyin=false;tag="空";}
 
-  const fontSize=cellSize*0.55;
-  const z=showZhuyin ? item.zhuyin : "";
-  const zh=splitZhuyin(z);
+  const fontSize = cellSize*0.55;
+  const z = showZhuyin ? item.zhuyin : "";
+  const zh = splitZhuyin(z);
 
   return `
     <div class="cell" onclick="toggleCell(${index})">
@@ -428,14 +477,17 @@ function emptyCell(){
 }
 
 function toggleCell(index){
-  const order=["both","zhuyinOnly","charOnly","trace","blank"];
-  const current=cellData[index].mode;
-  const next=order[(order.indexOf(current)+1)%order.length];
-  cellData[index].mode=next;
+  if(!cellData[index]) return;
+
+  const order = ["both","zhuyinOnly","charOnly","trace","blank"];
+  const current = cellData[index].mode || "both";
+  const next = order[(order.indexOf(current)+1)%order.length];
+
+  cellData[index].mode = next;
   redrawBook();
 }
 
-["words","gridSize","defaultMode","opacity"].forEach(id=>{
+["words","defaultMode","opacity"].forEach(id=>{
   document.getElementById(id).addEventListener("change",function(){
     if(id==="words" || id==="defaultMode"){
       generateBook();
@@ -445,7 +497,11 @@ function toggleCell(index){
   });
 });
 
-generateBook();
+window.addEventListener("beforeunload", saveLocalMemory);
+
+if(!loadLocalMemory()){
+  generateBook();
+}
 </script>
 
 </body>
