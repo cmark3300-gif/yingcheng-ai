@@ -1,3 +1,4 @@
+JavaScript
 const STORAGE_KEY="yc_vocab_v92";
 let cellData=[];
 
