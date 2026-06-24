@@ -1,1 +1,91 @@
+/* 穎橙 AI 生字簿 V9 */
 
+body{
+  margin:0;
+  font-family:"Microsoft JhengHei",sans-serif;
+  background:#f4f7fb;
+}
+
+header{
+  background:linear-gradient(90deg,#2563eb,#f97316);
+  color:white;
+  text-align:center;
+  padding:18px;
+}
+
+.page{
+  width:210mm;
+  min-height:297mm;
+  margin:auto;
+  background:white;
+  padding:8mm;
+  box-sizing:border-box;
+}
+
+/* 波波式格子 */
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(10,1fr);
+  gap:0;
+}
+
+.word-cell{
+  display:flex;
+  align-items:stretch;
+}
+
+/* 正方形田字格 */
+
+.char-grid{
+  width:16mm;
+  height:16mm;
+  position:relative;
+  border:1px solid #333;
+  box-sizing:border-box;
+}
+
+.char-grid::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:0;
+  height:100%;
+  border-left:1px dashed #7db4ff;
+}
+
+.char-grid::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  left:0;
+  width:100%;
+  border-top:1px dashed #7db4ff;
+}
+
+.diag1,
+.diag2{
+  position:absolute;
+  width:140%;
+  border-top:1px dashed #bcd7ff;
+  left:-20%;
+  top:50%;
+}
+
+.diag1{
+  transform:rotate(45deg);
+}
+
+.diag2{
+  transform:rotate(-45deg);
+}
+
+/* 注音欄獨立 */
+
+.zhuyin-grid{
+  width:6mm;
+  height:16mm;
+  border:1px solid #333;
+  border-left:none;
+  position:relative;
+}
