@@ -169,9 +169,8 @@ function renderZhuyin(base,tone){
   }else if(symbols.length === 3){
     pos = [25,50,75];
   }else{
-    pos = [18,40,62,84];
-  }
-
+  pos = [14,38,62,86];
+}
   let html = `<div class="z-base">`;
 
   symbols.forEach((ch,i)=>{
