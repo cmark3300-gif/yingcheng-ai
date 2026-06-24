@@ -105,16 +105,19 @@ button.green{background:#0f766e;}
 
 .z-base span{
   position:absolute;
-  left:35%;
+  left:28%;
   transform:translate(-50%,-50%);
-  font-size:19px;
+  font-size:18px;
   line-height:1;
   font-weight:900;
   color:#000;
 }
+
 .z-tone{
   position:absolute;
-  right:0.5px;
+  right:0;
+  width:35%;
+  text-align:center;
   transform:translateY(-50%);
   font-size:15px;
   line-height:1;
