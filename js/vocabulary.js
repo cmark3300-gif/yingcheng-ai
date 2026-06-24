@@ -150,32 +150,39 @@ function cell(item,index){
 }
 
 function renderZhuyin(base,tone){
-  const symbols = [...(base || "")];
+  const chars = [...(base || "")];
 
-  if(tone){
-    symbols.push(tone);
-  }
-
-  if(symbols.length === 0){
+  if(chars.length === 0){
     return "";
   }
 
   let pos = [];
 
-  if(symbols.length === 1){
+  if(chars.length === 1){
     pos = [50];
-  }else if(symbols.length === 2){
-    pos = [38,62];
-  }else if(symbols.length === 3){
-    pos = [25,50,75];
+  }else if(chars.length === 2){
+    pos = [36,64];
   }else{
-  pos = [14,38,62,86];
-}
+    pos = [24,50,76];
+  }
+
   let html = `<div class="z-base">`;
 
-  symbols.forEach((ch,i)=>{
+  chars.forEach((ch,i)=>{
     html += `<span style="top:${pos[i]}%">${ch}</span>`;
   });
+
+  if(tone){
+    let toneTop;
+
+    if(chars.length === 1){
+      toneTop = 58;
+    }else{
+      toneTop = (pos[chars.length-2] + pos[chars.length-1]) / 2;
+    }
+
+    html += `<span class="tone-mark" style="top:${toneTop}%">${tone}</span>`;
+  }
 
   html += `</div>`;
 
