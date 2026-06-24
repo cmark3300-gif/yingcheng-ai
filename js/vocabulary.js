@@ -91,16 +91,59 @@ function cell(item,index){
 }
 
 function renderZhuyin(base,tone){
-  const chars=[...base];
-  const pos=chars.length===1?[50]:chars.length===2?[38,62]:[28,50,72];
-  let html=`<div class="z-base">`;
-  chars.forEach((ch,i)=>html+=`<span style="top:${pos[i]}%">${ch}</span>`);
-  html+=`</div>`;
+
+  const symbols = [...(base || "")];
+
   if(tone){
-    let top=chars.length>=2?(pos[pos.length-2]+pos[pos.length-1])/2:58;
-    html+=`<div class="z-tone" style="top:${top}%">${tone}</div>`;
+
+    symbols.push(tone);
+
   }
+
+  if(symbols.length===0){
+
+    return "";
+
+  }
+
+  let pos=[];
+
+  if(symbols.length===1){
+
+    pos=[50];
+
+  }
+
+  else if(symbols.length===2){
+
+    pos=[38,62];
+
+  }
+
+  else if(symbols.length===3){
+
+    pos=[25,50,75];
+
+  }
+
+  else{
+
+    pos=[18,40,62,84];
+
+  }
+
+  let html=`<div class="z-base">`;
+
+  symbols.forEach((ch,i)=>{
+
+    html += `<span style="top:${pos[i]}%">${ch}</span>`;
+
+  });
+
+  html += `</div>`;
+
   return html;
+
 }
 
 function toggle(i){
