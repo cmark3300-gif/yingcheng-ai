@@ -3,21 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>生字簿產生器 V6｜穎橙 AI 智慧學習</title>
+<title>生字簿產生器 V7｜穎橙 AI 智慧學習</title>
 
 <style>
 body{margin:0;font-family:"Microsoft JhengHei",Arial,sans-serif;background:#f4f7fb;color:#1f2937;}
-header{background:linear-gradient(90deg,#2563eb,#f97316);color:white;padding:24px 20px;text-align:center;}
+header{background:linear-gradient(90deg,#2563eb,#f97316);color:white;padding:22px 15px;text-align:center;}
+header h1{margin:0;font-size:28px;}
+header p{margin:8px 0 0;}
+
 .container{display:flex;gap:20px;padding:20px;}
 .panel{background:white;border-radius:14px;padding:22px;box-shadow:0 3px 12px rgba(0,0,0,.08);}
 .left{width:390px;}
-.right{flex:1;}
+.right{flex:1;min-width:0;}
+
 label{display:block;margin-top:14px;font-weight:bold;}
-textarea,select,input{width:100%;box-sizing:border-box;padding:10px;margin-top:6px;font-size:16px;}
-button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;color:white;font-weight:bold;font-size:16px;cursor:pointer;}
+textarea,select,input{width:100%;box-sizing:border-box;padding:11px;margin-top:6px;font-size:16px;}
+button{width:100%;padding:14px;margin-top:18px;border:none;border-radius:9px;color:white;font-weight:bold;font-size:17px;cursor:pointer;}
 .generate{background:#2563eb;}
 .print{background:#f97316;}
 .note{font-size:14px;color:#6b7280;margin-top:10px;line-height:1.6;}
+
 .paper{background:#e5e7eb;padding:20px;min-height:650px;overflow:auto;}
 
 .page{
@@ -48,34 +53,45 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
   box-sizing:border-box;
   background:white;
   cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color:rgba(37,99,235,.2);
 }
 
-.cell:hover{
-  background:#fff7ed;
-}
+.cell:hover{background:#fff7ed;}
 
 .zhuyinBox{
-  width:34%;
+  width:36%;
   height:100%;
   border-left:1px solid #999;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  position:relative;
   box-sizing:border-box;
   color:#111827;
   font-family:"Microsoft JhengHei",Arial,sans-serif;
 }
 
-.zhuyinInner{
+.zhuyinBase{
+  position:absolute;
+  top:50%;
+  left:45%;
+  transform:translate(-50%,-50%);
   writing-mode:vertical-rl;
-  text-orientation:mixed;
-  line-height:1.05;
+  text-orientation:upright;
+  line-height:1;
   letter-spacing:0;
   white-space:nowrap;
 }
 
+.zhuyinTone{
+  position:absolute;
+  right:2px;
+  top:53%;
+  transform:translateY(-50%);
+  font-size:.82em;
+  line-height:1;
+}
+
 .charBox{
-  width:66%;
+  width:64%;
   height:100%;
   position:relative;
   display:flex;
@@ -110,7 +126,6 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
   top:50%;
   left:-10%;
 }
-
 .diagonal1{transform:rotate(45deg);}
 .diagonal2{transform:rotate(-45deg);}
 
@@ -123,12 +138,49 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
   bottom:1px;
   font-size:9px;
   color:#2563eb;
-  background:rgba(255,255,255,.8);
+  background:rgba(255,255,255,.85);
   z-index:3;
 }
 
 .row2{display:flex;gap:10px;align-items:center;}
 .row2 input[type="color"]{height:42px;padding:2px;}
+
+@media screen and (max-width:768px){
+  header h1{font-size:24px;}
+  .container{
+    display:block;
+    padding:10px;
+  }
+  .panel{
+    padding:15px;
+    margin-bottom:12px;
+  }
+  .left{
+    width:auto;
+  }
+  textarea{
+    min-height:120px;
+  }
+  button{
+    font-size:18px;
+    padding:15px;
+  }
+  .paper{
+    padding:10px;
+    overflow:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .page{
+    margin:0 0 15px 0;
+    transform-origin:top left;
+  }
+  .right h2{
+    font-size:20px;
+  }
+  .note{
+    font-size:15px;
+  }
+}
 
 @media print{
   header,.left,.right h2,.statusTag{display:none;}
@@ -152,7 +204,7 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
 
 <header>
   <h1>穎橙 AI 智慧學習</h1>
-  <p>生字簿產生器 V6｜點選方格切換國字與注音</p>
+  <p>生字簿產生器 V7｜手機版＋注音聲調修正版</p>
 </header>
 
 <div class="container">
@@ -160,7 +212,7 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
 <div class="panel left">
 
 <label>輸入詞語或句子</label>
-<textarea id="words" rows="6" placeholder="例如：黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細">黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細</textarea>
+<textarea id="words" rows="6">黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細</textarea>
 
 <label>表格大小</label>
 <select id="gridSize">
@@ -197,16 +249,15 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
 <button class="print" onclick="window.print()">列印／另存 PDF</button>
 
 <p class="note">
-使用方式：產生後直接點每個方格切換。<br>
-切換順序：國字＋注音 → 只顯示注音 → 只顯示國字 → 描寫 → 空白。<br>
-破音字可在下一版加入「點格修改注音」功能。
+手機可直接點方格切換：全 → 音 → 字 → 描 → 空。<br>
+注音聲調已改成獨立靠右顯示，比較接近正式注音欄。
 </p>
 
 </div>
 
 <div class="panel right">
 <h2>生字簿預覽</h2>
-<div id="paper" class="paper">請輸入文字後，按「產生生字簿」。</div>
+<div id="paper" class="paper"></div>
 </div>
 
 </div>
@@ -239,6 +290,21 @@ function cleanText(text){
   return text.replace(/[，,、。！？；：「」『』（）()《》〈〉\n\r\t]/g,"").replace(/\s/g,"");
 }
 
+function splitZhuyin(z){
+  const toneMarks=["ˊ","ˇ","ˋ","˙"];
+  let tone="";
+  let base=z;
+
+  toneMarks.forEach(t=>{
+    if(z.includes(t)){
+      tone=t;
+      base=z.replace(t,"");
+    }
+  });
+
+  return {base,tone};
+}
+
 document.getElementById("fontColor").addEventListener("input",function(){
   document.getElementById("fontColorText").value=this.value;
   redrawBook();
@@ -250,15 +316,15 @@ document.getElementById("fontColorText").addEventListener("input",function(){
 });
 
 function generateBook(){
-  const text = cleanText(document.getElementById("words").value);
-  const defaultMode = document.getElementById("defaultMode").value;
+  const text=cleanText(document.getElementById("words").value);
+  const defaultMode=document.getElementById("defaultMode").value;
 
   if(!text){
     alert("請先輸入文字");
     return;
   }
 
-  cellData = [...text].map(ch=>({
+  cellData=[...text].map(ch=>({
     char:ch,
     zhuyin:getZhuyin(ch),
     mode:defaultMode
@@ -312,7 +378,7 @@ function redrawBook(){
 
 function createCell(item,cellSize,index){
   if(!item){
-    return emptyCell(cellSize);
+    return emptyCell();
   }
 
   const fontColor=document.getElementById("fontColorText").value || "#111827";
@@ -323,58 +389,33 @@ function createCell(item,cellSize,index){
   let charOpacity=1;
   let tag="全";
 
-  if(item.mode==="both"){
-    showChar=true;
-    showZhuyin=true;
-    tag="全";
-  }
-
-  if(item.mode==="zhuyinOnly"){
-    showChar=false;
-    showZhuyin=true;
-    tag="音";
-  }
-
-  if(item.mode==="charOnly"){
-    showChar=true;
-    showZhuyin=false;
-    tag="字";
-  }
-
-  if(item.mode==="trace"){
-    showChar=true;
-    showZhuyin=true;
-    charOpacity=opacity;
-    tag="描";
-  }
-
-  if(item.mode==="blank"){
-    showChar=false;
-    showZhuyin=false;
-    tag="空";
-  }
+  if(item.mode==="zhuyinOnly"){showChar=false;showZhuyin=true;tag="音";}
+  if(item.mode==="charOnly"){showChar=true;showZhuyin=false;tag="字";}
+  if(item.mode==="trace"){showChar=true;showZhuyin=true;charOpacity=opacity;tag="描";}
+  if(item.mode==="blank"){showChar=false;showZhuyin=false;tag="空";}
 
   const fontSize=cellSize*0.55;
   const z=showZhuyin ? item.zhuyin : "";
-  const ch=showChar ? item.char : item.char;
+  const zh=splitZhuyin(z);
 
   return `
     <div class="cell" onclick="toggleCell(${index})">
-      <div class="zhuyinBox" style="font-size:${cellSize*0.2}mm;">
-        <div class="zhuyinInner">${z}</div>
+      <div class="zhuyinBox" style="font-size:${cellSize*0.22}mm;">
+        <div class="zhuyinBase">${zh.base}</div>
+        <div class="zhuyinTone">${zh.tone}</div>
       </div>
       <div class="charBox" style="font-size:${fontSize}mm;">
         <div class="diagonal1"></div>
         <div class="diagonal2"></div>
         <span class="${showChar ? "sampleChar" : "hiddenChar"}"
-              style="color:${fontColor};opacity:${charOpacity};">${ch}</span>
+              style="color:${fontColor};opacity:${charOpacity};">${item.char}</span>
       </div>
       <div class="statusTag">${tag}</div>
     </div>
   `;
 }
 
-function emptyCell(cellSize){
+function emptyCell(){
   return `
     <div class="cell">
       <div class="zhuyinBox"></div>
