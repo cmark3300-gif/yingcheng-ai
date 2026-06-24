@@ -3,19 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>生字簿產生器 V8-A｜穎橙 AI 智慧學習</title>
+<title>生字簿產生器 V8-B｜穎橙 AI 智慧學習</title>
 
 <style>
 body{margin:0;font-family:"Microsoft JhengHei",Arial,sans-serif;background:#f4f7fb;color:#1f2937;}
-header{background:linear-gradient(90deg,#2563eb,#f97316);color:white;padding:20px 12px;text-align:center;}
-header h1{margin:0;font-size:26px;}
-header p{margin:8px 0 0;}
-
+header{background:linear-gradient(90deg,#2563eb,#f97316);color:white;padding:18px 12px;text-align:center;}
+header h1{margin:0;font-size:25px;}
+header p{margin:6px 0 0;}
 .container{display:flex;gap:16px;padding:16px;}
 .panel{background:white;border-radius:14px;padding:18px;box-shadow:0 3px 12px rgba(0,0,0,.08);}
 .left{width:390px;}
 .right{flex:1;min-width:0;}
-
 label{display:block;margin-top:12px;font-weight:bold;}
 textarea,select,input{width:100%;box-sizing:border-box;padding:11px;margin-top:6px;font-size:16px;}
 button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;color:white;font-weight:bold;font-size:17px;cursor:pointer;}
@@ -24,7 +22,6 @@ button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;col
 .clearBtn{background:#64748b;}
 .print{background:#f97316;}
 .note{font-size:14px;color:#6b7280;margin-top:10px;line-height:1.6;}
-
 .paper{background:#e5e7eb;padding:12px;min-height:650px;overflow:auto;}
 
 .page{
@@ -44,13 +41,15 @@ button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;col
   display:grid;
   grid-template-columns:repeat(10, 18mm);
   grid-template-rows:repeat(10, 18mm);
-  border-top:1.7px solid #111;
-  border-left:1.7px solid #111;
+  border-top:1.8px solid #111;
+  border-left:1.8px solid #111;
 }
 
 .cell{
-  border-right:1.7px solid #111;
-  border-bottom:1.7px solid #111;
+  width:18mm;
+  height:18mm;
+  border-right:1.8px solid #111;
+  border-bottom:1.8px solid #111;
   position:relative;
   display:flex;
   flex-direction:row-reverse;
@@ -60,7 +59,6 @@ button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;col
   user-select:none;
   -webkit-tap-highlight-color:rgba(37,99,235,.2);
 }
-
 .cell:hover{background:#fff7ed;}
 
 .zhuyinBox{
@@ -70,30 +68,28 @@ button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;col
   position:relative;
   box-sizing:border-box;
   color:#000;
-  font-family:"Microsoft JhengHei",Arial,sans-serif;
-  font-weight:700;
-}
-
-.zhuyinBase{
-  position:absolute;
-  top:50%;
-  left:42%;
-  transform:translate(-50%,-50%);
-  writing-mode:vertical-rl;
-  text-orientation:upright;
-  line-height:1;
-  letter-spacing:0;
-  white-space:nowrap;
-}
-
-.zhuyinTone{
-  position:absolute;
-  right:2px;
-  top:58%;
-  transform:translateY(-50%);
-  font-size:.85em;
+  font-family:"標楷體","DFKai-SB","BiauKai","KaiTi","Microsoft JhengHei",serif;
   font-weight:900;
+}
+
+.zhuyinSymbol{
+  position:absolute;
+  left:48%;
+  transform:translateX(-50%);
+  font-size:3.9mm;
   line-height:1;
+  font-weight:900;
+  color:#000;
+}
+
+.toneMark{
+  position:absolute;
+  right:1.3mm;
+  transform:translateY(-50%);
+  font-size:3.4mm;
+  line-height:1;
+  font-weight:900;
+  color:#000;
 }
 
 .charBox{
@@ -115,7 +111,6 @@ button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;col
   height:100%;
   border-left:1px dashed #93c5fd;
 }
-
 .charBox::after{
   content:"";
   position:absolute;
@@ -124,7 +119,6 @@ button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;col
   width:100%;
   border-top:1px dashed #93c5fd;
 }
-
 .diagonal1,.diagonal2{
   position:absolute;
   width:120%;
@@ -134,7 +128,6 @@ button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;col
 }
 .diagonal1{transform:rotate(45deg);}
 .diagonal2{transform:rotate(-45deg);}
-
 .sampleChar{z-index:2;}
 .hiddenChar{color:transparent!important;}
 
@@ -158,17 +151,8 @@ button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;col
   .left{width:auto;}
   textarea{min-height:120px;}
   button{font-size:18px;padding:15px;}
-  .paper{
-    padding:8px;
-    overflow:auto;
-    -webkit-overflow-scrolling:touch;
-  }
-  .page{
-    margin:0 0 15px 0;
-    transform-origin:top left;
-  }
+  .paper{padding:8px;overflow:auto;-webkit-overflow-scrolling:touch;}
   .right h2{font-size:20px;}
-  .note{font-size:15px;}
 }
 
 @media print{
@@ -193,7 +177,7 @@ button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;col
 
 <header>
   <h1>穎橙 AI 智慧學習</h1>
-  <p>生字簿產生器 V8-A｜10×10固定版＋手機可用＋本機記憶</p>
+  <p>生字簿產生器 V8-B｜正方形格＋注音聲調修正＋可手動改注音</p>
 </header>
 
 <div class="container">
@@ -201,7 +185,7 @@ button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;col
 <div class="panel left">
 
 <label>輸入詞語或句子</label>
-<textarea id="words" rows="6">黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細</textarea>
+<textarea id="words" rows="6">黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細 不可以</textarea>
 
 <label>預設顯示模式</label>
 <select id="defaultMode">
@@ -233,9 +217,9 @@ button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;col
 <button class="print" onclick="window.print()">列印／另存 PDF</button>
 
 <p class="note">
-手機可直接點方格切換：全 → 音 → 字 → 描 → 空。<br>
-本頁會自動記住此裝置最後一次內容與方格狀態。不同手機、不同電腦各自保存。<br>
-V8-A 先完成版面、空白簿、本機記憶與貼新字錯誤修正。
+點方格切換：全 → 音 → 字 → 描 → 空。<br>
+長按或雙擊方格：手動修改注音，可處理破音字。<br>
+V8-B 已把格子固定為真正正方形，並將聲調放在最後兩個注音符號中間偏右。
 </p>
 
 </div>
@@ -248,7 +232,7 @@ V8-A 先完成版面、空白簿、本機記憶與貼新字錯誤修正。
 </div>
 
 <script>
-const STORAGE_KEY = "yingcheng_vocabulary_v8a";
+const STORAGE_KEY = "yingcheng_vocabulary_v8b";
 
 const zhuyinMap = {
   "黃":"ㄏㄨㄤˊ","狗":"ㄍㄡˇ","公":"ㄍㄨㄥ","雞":"ㄐㄧ",
@@ -256,6 +240,7 @@ const zhuyinMap = {
   "山":"ㄕㄢ","羊":"ㄧㄤˊ","鴨":"ㄧㄚ","子":"ㄗˇ",
   "信":"ㄒㄧㄣˋ","用":"ㄩㄥˋ","錯":"ㄘㄨㄛˋ","誤":"ㄨˋ",
   "眼":"ㄧㄢˇ","睛":"ㄐㄧㄥ","仔":"ㄗˇ","細":"ㄒㄧˋ",
+  "不":"ㄅㄨˋ","可":"ㄎㄜˇ","以":"ㄧˇ",
   "小":"ㄒㄧㄠˇ","明":"ㄇㄧㄥˊ","今":"ㄐㄧㄣ","天":"ㄊㄧㄢ",
   "到":"ㄉㄠˋ","學":"ㄒㄩㄝˊ","校":"ㄒㄧㄠˋ","上":"ㄕㄤˋ",
   "課":"ㄎㄜˋ","後":"ㄏㄡˋ","產":"ㄔㄢˇ","出":"ㄔㄨ",
@@ -267,7 +252,18 @@ const zhuyinMap = {
   "他":"ㄊㄚ","她":"ㄊㄚ","好":"ㄏㄠˇ"
 };
 
+const polyphoneMap = {
+  "行":["ㄒㄧㄥˊ","ㄏㄤˊ"],
+  "樂":["ㄌㄜˋ","ㄩㄝˋ"],
+  "長":["ㄔㄤˊ","ㄓㄤˇ"],
+  "重":["ㄓㄨㄥˋ","ㄔㄨㄥˊ"],
+  "只":["ㄓ","ㄓˇ"],
+  "的":["ㄉㄜ˙","ㄉㄧˊ","ㄉㄧˋ"],
+  "著":["ㄓㄜ˙","ㄓㄠˊ","ㄓㄨㄛˊ"]
+};
+
 let cellData = [];
+let longPressTimer = null;
 
 function getZhuyin(ch){
   return zhuyinMap[ch] || "";
@@ -281,14 +277,12 @@ function splitZhuyin(z){
   const toneMarks=["ˊ","ˇ","ˋ","˙"];
   let tone="";
   let base=z || "";
-
   toneMarks.forEach(t=>{
     if(base.includes(t)){
       tone=t;
       base=base.replace(t,"");
     }
   });
-
   return {base,tone};
 }
 
@@ -307,9 +301,7 @@ function loadLocalMemory(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
     if(!raw) return false;
-
     const data = JSON.parse(raw);
-
     if(data.words) document.getElementById("words").value = data.words;
     if(data.defaultMode) document.getElementById("defaultMode").value = data.defaultMode;
     if(data.fontColor){
@@ -317,15 +309,12 @@ function loadLocalMemory(){
       document.getElementById("fontColor").value = data.fontColor;
     }
     if(data.opacity) document.getElementById("opacity").value = data.opacity;
-
     if(Array.isArray(data.cellData)){
       cellData = data.cellData;
       redrawBook();
       return true;
     }
-  }catch(e){
-    console.warn("本機記憶讀取失敗，已重新產生。", e);
-  }
+  }catch(e){}
   return false;
 }
 
@@ -353,7 +342,6 @@ document.getElementById("fontColorText").addEventListener("input",function(){
 function generateBook(){
   const text = cleanText(document.getElementById("words").value);
   const defaultMode = document.getElementById("defaultMode").value;
-
   cellData = [];
 
   if(!text){
@@ -374,15 +362,9 @@ function generateBook(){
 
 function generateBlankBook(){
   cellData = [];
-
   for(let i=0;i<100;i++){
-    cellData.push({
-      char:"",
-      zhuyin:"",
-      mode:"blank"
-    });
+    cellData.push({char:"", zhuyin:"", mode:"blank"});
   }
-
   redrawBook();
 }
 
@@ -400,21 +382,17 @@ function redrawBook(){
     pages.push(cellData.slice(i,i+cellsPerPage));
   }
 
-  const cellSize = 18;
   let html = "";
 
   pages.forEach((pageItems,pageIndex)=>{
-    html += `
-      <div class="page">
-        <div class="grid">
-    `;
+    html += `<div class="page"><div class="grid">`;
 
     for(let r=0;r<10;r++){
       for(let c=0;c<10;c++){
         const indexInPage = c*10+r;
         const globalIndex = pageIndex*cellsPerPage+indexInPage;
         const item = pageItems[indexInPage];
-        html += createCell(item, cellSize, globalIndex);
+        html += createCell(item, globalIndex);
       }
     }
 
@@ -425,10 +403,8 @@ function redrawBook(){
   saveLocalMemory();
 }
 
-function createCell(item,cellSize,index){
-  if(!item){
-    return emptyCell();
-  }
+function createCell(item,index){
+  if(!item) return emptyCell();
 
   const fontColor = document.getElementById("fontColorText").value || "#111827";
   const opacity = document.getElementById("opacity").value;
@@ -443,17 +419,21 @@ function createCell(item,cellSize,index){
   if(item.mode === "trace"){showChar=true;showZhuyin=true;charOpacity=opacity;tag="描";}
   if(item.mode === "blank"){showChar=false;showZhuyin=false;tag="空";}
 
-  const fontSize = cellSize*0.55;
   const z = showZhuyin ? item.zhuyin : "";
   const zh = splitZhuyin(z);
+  const zhuyinHtml = renderZhuyin(zh.base, zh.tone);
 
   return `
-    <div class="cell" onclick="toggleCell(${index})">
-      <div class="zhuyinBox" style="font-size:${cellSize*0.22}mm;">
-        <div class="zhuyinBase">${zh.base}</div>
-        <div class="zhuyinTone">${zh.tone}</div>
+    <div class="cell"
+      onclick="toggleCell(${index})"
+      ondblclick="editZhuyin(${index})"
+      ontouchstart="startLongPress(${index})"
+      ontouchend="cancelLongPress()"
+      ontouchmove="cancelLongPress()">
+      <div class="zhuyinBox">
+        ${zhuyinHtml}
       </div>
-      <div class="charBox" style="font-size:${fontSize}mm;">
+      <div class="charBox" style="font-size:9.9mm;">
         <div class="diagonal1"></div>
         <div class="diagonal2"></div>
         <span class="${showChar ? "sampleChar" : "hiddenChar"}"
@@ -462,6 +442,40 @@ function createCell(item,cellSize,index){
       <div class="statusTag">${tag}</div>
     </div>
   `;
+}
+
+function renderZhuyin(base,tone){
+  if(!base && !tone) return "";
+
+  const chars = [...base];
+  const count = chars.length;
+
+  let positions = [];
+
+  if(count === 1){
+    positions = [45];
+  }else if(count === 2){
+    positions = [34,56];
+  }else{
+    positions = [26,46,66];
+  }
+
+  let html = "";
+
+  chars.forEach((ch,i)=>{
+    html += `<span class="zhuyinSymbol" style="top:${positions[i]}%;">${ch}</span>`;
+  });
+
+  if(tone){
+    let toneTop = 55;
+    if(count === 1) toneTop = 56;
+    if(count === 2) toneTop = (positions[0] + positions[1]) / 2;
+    if(count >= 3) toneTop = (positions[count-2] + positions[count-1]) / 2;
+
+    html += `<span class="toneMark" style="top:${toneTop}%;">${tone}</span>`;
+  }
+
+  return html;
 }
 
 function emptyCell(){
@@ -478,13 +492,45 @@ function emptyCell(){
 
 function toggleCell(index){
   if(!cellData[index]) return;
-
   const order = ["both","zhuyinOnly","charOnly","trace","blank"];
   const current = cellData[index].mode || "both";
   const next = order[(order.indexOf(current)+1)%order.length];
-
   cellData[index].mode = next;
   redrawBook();
+}
+
+function startLongPress(index){
+  longPressTimer = setTimeout(()=>{
+    editZhuyin(index);
+  },600);
+}
+
+function cancelLongPress(){
+  if(longPressTimer){
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+  }
+}
+
+function editZhuyin(index){
+  if(!cellData[index]) return;
+
+  const ch = cellData[index].char;
+  let suggestions = polyphoneMap[ch] || [];
+  if(cellData[index].zhuyin && !suggestions.includes(cellData[index].zhuyin)){
+    suggestions.unshift(cellData[index].zhuyin);
+  }
+
+  let message = `請輸入「${ch}」的注音：`;
+  if(suggestions.length>0){
+    message += `\n可選：${suggestions.join(" / ")}`;
+  }
+
+  const result = prompt(message, cellData[index].zhuyin || "");
+  if(result !== null){
+    cellData[index].zhuyin = result.trim();
+    redrawBook();
+  }
 }
 
 ["words","defaultMode","opacity"].forEach(id=>{
