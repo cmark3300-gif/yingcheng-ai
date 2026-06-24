@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>生字簿產生器 V8-B｜穎橙 AI 智慧學習</title>
+<title>生字簿產生器 V8-C｜穎橙 AI 智慧學習</title>
 
 <style>
 body{margin:0;font-family:"Microsoft JhengHei",Arial,sans-serif;background:#f4f7fb;color:#1f2937;}
 header{background:linear-gradient(90deg,#2563eb,#f97316);color:white;padding:18px 12px;text-align:center;}
-header h1{margin:0;font-size:25px;}
-header p{margin:6px 0 0;}
+header h1{margin:0;font-size:24px;}
 .container{display:flex;gap:16px;padding:16px;}
 .panel{background:white;border-radius:14px;padding:18px;box-shadow:0 3px 12px rgba(0,0,0,.08);}
 .left{width:390px;}
@@ -21,7 +20,7 @@ button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;col
 .blankBtn{background:#0f766e;}
 .clearBtn{background:#64748b;}
 .print{background:#f97316;}
-.note{font-size:14px;color:#6b7280;margin-top:10px;line-height:1.6;}
+.note{font-size:14px;color:#6b7280;line-height:1.6;}
 .paper{background:#e5e7eb;padding:12px;min-height:650px;overflow:auto;}
 
 .page{
@@ -29,7 +28,7 @@ button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;col
   height:297mm;
   background:white;
   margin:0 auto 20px auto;
-  padding:10mm;
+  padding:8mm;
   box-sizing:border-box;
   page-break-after:always;
   display:flex;
@@ -39,92 +38,97 @@ button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;col
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(10, 18mm);
-  grid-template-rows:repeat(10, 18mm);
+  grid-template-columns:repeat(10, 18.8mm);
+  grid-template-rows:repeat(10, 18.8mm);
   border-top:1.8px solid #111;
   border-left:1.8px solid #111;
 }
 
 .cell{
-  width:18mm;
-  height:18mm;
+  width:18.8mm;
+  height:18.8mm;
   border-right:1.8px solid #111;
   border-bottom:1.8px solid #111;
-  position:relative;
+  box-sizing:border-box;
   display:flex;
   flex-direction:row-reverse;
-  box-sizing:border-box;
   background:white;
+  position:relative;
   cursor:pointer;
   user-select:none;
-  -webkit-tap-highlight-color:rgba(37,99,235,.2);
 }
-.cell:hover{background:#fff7ed;}
 
 .zhuyinBox{
-  width:36%;
+  width:35%;
   height:100%;
   border-left:1.2px solid #111;
-  position:relative;
   box-sizing:border-box;
+  position:relative;
   color:#000;
   font-family:"標楷體","DFKai-SB","BiauKai","KaiTi","Microsoft JhengHei",serif;
   font-weight:900;
+  display:flex;
+  flex-direction:row-reverse;
+}
+
+.toneCol{
+  width:38%;
+  height:100%;
+  position:relative;
+}
+
+.baseCol{
+  width:62%;
+  height:100%;
+  position:relative;
 }
 
 .zhuyinSymbol{
   position:absolute;
-  left:48%;
-  transform:translateX(-50%);
-  font-size:3.9mm;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:3.6mm;
   line-height:1;
   font-weight:900;
-  color:#000;
 }
 
 .toneMark{
   position:absolute;
-  right:1.3mm;
-  transform:translateY(-50%);
-  font-size:3.4mm;
-  line-height:1;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:3.1mm;
   font-weight:900;
-  color:#000;
+  line-height:1;
 }
 
 .charBox{
-  width:64%;
+  width:65%;
   height:100%;
   position:relative;
   display:flex;
   align-items:center;
   justify-content:center;
-  box-sizing:border-box;
   font-family:"標楷體","DFKai-SB","BiauKai","KaiTi","Microsoft JhengHei",serif;
+  box-sizing:border-box;
 }
 
 .charBox::before{
   content:"";
   position:absolute;
-  top:0;
-  left:50%;
-  height:100%;
+  top:0;left:50%;height:100%;
   border-left:1px dashed #93c5fd;
 }
 .charBox::after{
   content:"";
   position:absolute;
-  left:0;
-  top:50%;
-  width:100%;
+  left:0;top:50%;width:100%;
   border-top:1px dashed #93c5fd;
 }
 .diagonal1,.diagonal2{
   position:absolute;
   width:120%;
   border-top:1px dashed #bfdbfe;
-  top:50%;
-  left:-10%;
+  top:50%;left:-10%;
 }
 .diagonal1{transform:rotate(45deg);}
 .diagonal2{transform:rotate(-45deg);}
@@ -144,31 +148,46 @@ button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;col
 .row2{display:flex;gap:10px;align-items:center;}
 .row2 input[type="color"]{height:42px;padding:2px;}
 
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  z-index:9999;
+  align-items:center;
+  justify-content:center;
+}
+.modalBox{
+  background:white;
+  width:min(92vw,420px);
+  border-radius:14px;
+  padding:20px;
+  box-shadow:0 8px 30px rgba(0,0,0,.25);
+}
+.modalBox h3{margin-top:0;}
+.optionBtn{
+  background:#2563eb;
+  margin-top:8px;
+}
+.customBtn{background:#0f766e;}
+.cancelBtn{background:#64748b;}
+
 @media screen and (max-width:768px){
-  header h1{font-size:22px;}
   .container{display:block;padding:10px;}
-  .panel{padding:14px;margin-bottom:12px;}
   .left{width:auto;}
+  .panel{padding:14px;margin-bottom:12px;}
   textarea{min-height:120px;}
   button{font-size:18px;padding:15px;}
   .paper{padding:8px;overflow:auto;-webkit-overflow-scrolling:touch;}
-  .right h2{font-size:20px;}
 }
 
 @media print{
-  header,.left,.right h2,.statusTag{display:none;}
+  header,.left,.right h2,.statusTag,.modal{display:none!important;}
   body{background:white;}
   .container{display:block;padding:0;}
   .right{box-shadow:none;padding:0;}
   .paper{background:white;padding:0;}
-  .page{
-    width:210mm;
-    height:297mm;
-    margin:0;
-    padding:10mm;
-    page-break-after:always;
-  }
-  .cell:hover{background:white;}
+  .page{width:210mm;height:297mm;margin:0;padding:8mm;}
 }
 </style>
 </head>
@@ -177,38 +196,36 @@ button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;col
 
 <header>
   <h1>穎橙 AI 智慧學習</h1>
-  <p>生字簿產生器 V8-B｜正方形格＋注音聲調修正＋可手動改注音</p>
+  <p>生字簿產生器 V8-C｜聲調修正＋正方格＋破音字選擇</p>
 </header>
 
 <div class="container">
-
 <div class="panel left">
-
 <label>輸入詞語或句子</label>
-<textarea id="words" rows="6">黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細 不可以</textarea>
+<textarea id="words" rows="6">黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細 不可以 重量 行走 音樂</textarea>
 
 <label>預設顯示模式</label>
 <select id="defaultMode">
-  <option value="both" selected>國字＋注音</option>
-  <option value="zhuyinOnly">只顯示注音</option>
-  <option value="charOnly">只顯示國字</option>
-  <option value="trace">描寫</option>
-  <option value="blank">空白</option>
+<option value="both" selected>國字＋注音</option>
+<option value="zhuyinOnly">只顯示注音</option>
+<option value="charOnly">只顯示國字</option>
+<option value="trace">描寫</option>
+<option value="blank">空白</option>
 </select>
 
 <label>字體顏色</label>
 <div class="row2">
-  <input type="color" id="fontColor" value="#111827">
-  <input type="text" id="fontColorText" value="#111827">
+<input type="color" id="fontColor" value="#111827">
+<input type="text" id="fontColorText" value="#111827">
 </div>
 
 <label>描寫透明度</label>
 <select id="opacity">
-  <option value="1">100%</option>
-  <option value="0.75">75%</option>
-  <option value="0.5">50%</option>
-  <option value="0.25" selected>25%</option>
-  <option value="0.1">10%</option>
+<option value="1">100%</option>
+<option value="0.75">75%</option>
+<option value="0.5">50%</option>
+<option value="0.25" selected>25%</option>
+<option value="0.1">10%</option>
 </select>
 
 <button class="generate" onclick="generateBook()">產生生字簿</button>
@@ -218,336 +235,248 @@ button{width:100%;padding:14px;margin-top:14px;border:none;border-radius:9px;col
 
 <p class="note">
 點方格切換：全 → 音 → 字 → 描 → 空。<br>
-長按或雙擊方格：手動修改注音，可處理破音字。<br>
-V8-B 已把格子固定為真正正方形，並將聲調放在最後兩個注音符號中間偏右。
+雙擊或手機長按方格：選擇破音字注音或自訂注音。
 </p>
-
 </div>
 
 <div class="panel right">
 <h2>生字簿預覽</h2>
 <div id="paper" class="paper"></div>
 </div>
+</div>
 
+<div id="modal" class="modal">
+  <div class="modalBox">
+    <h3 id="modalTitle">選擇注音</h3>
+    <div id="optionArea"></div>
+    <button class="customBtn" onclick="customZhuyin()">自訂注音</button>
+    <button class="cancelBtn" onclick="closeModal()">取消</button>
+  </div>
 </div>
 
 <script>
-const STORAGE_KEY = "yingcheng_vocabulary_v8b";
+const STORAGE_KEY="yingcheng_vocabulary_v8c";
+let cellData=[];
+let editingIndex=null;
+let longPressTimer=null;
 
-const zhuyinMap = {
-  "黃":"ㄏㄨㄤˊ","狗":"ㄍㄡˇ","公":"ㄍㄨㄥ","雞":"ㄐㄧ",
-  "經":"ㄐㄧㄥ","過":"ㄍㄨㄛˋ","奇":"ㄑㄧˊ","怪":"ㄍㄨㄞˋ",
-  "山":"ㄕㄢ","羊":"ㄧㄤˊ","鴨":"ㄧㄚ","子":"ㄗˇ",
-  "信":"ㄒㄧㄣˋ","用":"ㄩㄥˋ","錯":"ㄘㄨㄛˋ","誤":"ㄨˋ",
-  "眼":"ㄧㄢˇ","睛":"ㄐㄧㄥ","仔":"ㄗˇ","細":"ㄒㄧˋ",
-  "不":"ㄅㄨˋ","可":"ㄎㄜˇ","以":"ㄧˇ",
-  "小":"ㄒㄧㄠˇ","明":"ㄇㄧㄥˊ","今":"ㄐㄧㄣ","天":"ㄊㄧㄢ",
-  "到":"ㄉㄠˋ","學":"ㄒㄩㄝˊ","校":"ㄒㄧㄠˋ","上":"ㄕㄤˋ",
-  "課":"ㄎㄜˋ","後":"ㄏㄡˋ","產":"ㄔㄢˇ","出":"ㄔㄨ",
-  "表":"ㄅㄧㄠˇ","格":"ㄍㄜˊ","國":"ㄍㄨㄛˊ","語":"ㄩˇ",
-  "習":"ㄒㄧˊ","生":"ㄕㄥ","字":"ㄗˋ","地":"ㄉㄧˋ",
-  "人":"ㄖㄣˊ","大":"ㄉㄚˋ","中":"ㄓㄨㄥ","水":"ㄕㄨㄟˇ",
-  "火":"ㄏㄨㄛˇ","木":"ㄇㄨˋ","金":"ㄐㄧㄣ","土":"ㄊㄨˇ",
-  "日":"ㄖˋ","月":"ㄩㄝˋ","我":"ㄨㄛˇ","你":"ㄋㄧˇ",
-  "他":"ㄊㄚ","她":"ㄊㄚ","好":"ㄏㄠˇ"
+const zhuyinMap={
+"黃":"ㄏㄨㄤˊ","狗":"ㄍㄡˇ","公":"ㄍㄨㄥ","雞":"ㄐㄧ",
+"經":"ㄐㄧㄥ","過":"ㄍㄨㄛˋ","奇":"ㄑㄧˊ","怪":"ㄍㄨㄞˋ",
+"山":"ㄕㄢ","羊":"ㄧㄤˊ","鴨":"ㄧㄚ","子":"ㄗˇ",
+"信":"ㄒㄧㄣˋ","用":"ㄩㄥˋ","錯":"ㄘㄨㄛˋ","誤":"ㄨˋ",
+"眼":"ㄧㄢˇ","睛":"ㄐㄧㄥ","仔":"ㄗˇ","細":"ㄒㄧˋ",
+"不":"ㄅㄨˋ","可":"ㄎㄜˇ","以":"ㄧˇ",
+"小":"ㄒㄧㄠˇ","明":"ㄇㄧㄥˊ","今":"ㄐㄧㄣ","天":"ㄊㄧㄢ",
+"到":"ㄉㄠˋ","學":"ㄒㄩㄝˊ","校":"ㄒㄧㄠˋ","上":"ㄕㄤˋ",
+"課":"ㄎㄜˋ","後":"ㄏㄡˋ","產":"ㄔㄢˇ","出":"ㄔㄨ",
+"表":"ㄅㄧㄠˇ","格":"ㄍㄜˊ","國":"ㄍㄨㄛˊ","語":"ㄩˇ",
+"習":"ㄒㄧˊ","生":"ㄕㄥ","字":"ㄗˋ","地":"ㄉㄧˋ",
+"人":"ㄖㄣˊ","大":"ㄉㄚˋ","中":"ㄓㄨㄥ","水":"ㄕㄨㄟˇ",
+"火":"ㄏㄨㄛˇ","木":"ㄇㄨˋ","金":"ㄐㄧㄣ","土":"ㄊㄨˇ",
+"日":"ㄖˋ","月":"ㄩㄝˋ","我":"ㄨㄛˇ","你":"ㄋㄧˇ",
+"他":"ㄊㄚ","她":"ㄊㄚ","好":"ㄏㄠˇ",
+"重":"ㄓㄨㄥˋ","量":"ㄌㄧㄤˋ","行":"ㄒㄧㄥˊ","樂":"ㄩㄝˋ"
 };
 
-const polyphoneMap = {
-  "行":["ㄒㄧㄥˊ","ㄏㄤˊ"],
-  "樂":["ㄌㄜˋ","ㄩㄝˋ"],
-  "長":["ㄔㄤˊ","ㄓㄤˇ"],
-  "重":["ㄓㄨㄥˋ","ㄔㄨㄥˊ"],
-  "只":["ㄓ","ㄓˇ"],
-  "的":["ㄉㄜ˙","ㄉㄧˊ","ㄉㄧˋ"],
-  "著":["ㄓㄜ˙","ㄓㄠˊ","ㄓㄨㄛˊ"]
+const polyphoneMap={
+"重":["ㄓㄨㄥˋ","ㄔㄨㄥˊ"],
+"行":["ㄒㄧㄥˊ","ㄏㄤˊ"],
+"樂":["ㄌㄜˋ","ㄩㄝˋ"],
+"長":["ㄔㄤˊ","ㄓㄤˇ"],
+"只":["ㄓ","ㄓˇ"],
+"的":["ㄉㄜ˙","ㄉㄧˊ","ㄉㄧˋ"],
+"著":["ㄓㄜ˙","ㄓㄠˊ","ㄓㄨㄛˊ"]
 };
 
-let cellData = [];
-let longPressTimer = null;
-
-function getZhuyin(ch){
-  return zhuyinMap[ch] || "";
-}
+function getZhuyin(ch){return zhuyinMap[ch]||"";}
 
 function cleanText(text){
-  return text.replace(/[，,、。！？；：「」『』（）()《》〈〉\n\r\t]/g,"").replace(/\s/g,"");
+ return text.replace(/[，,、。！？；：「」『』（）()《》〈〉\n\r\t]/g,"").replace(/\s/g,"");
 }
 
 function splitZhuyin(z){
-  const toneMarks=["ˊ","ˇ","ˋ","˙"];
-  let tone="";
-  let base=z || "";
-  toneMarks.forEach(t=>{
-    if(base.includes(t)){
-      tone=t;
-      base=base.replace(t,"");
-    }
-  });
-  return {base,tone};
+ const tones=["ˊ","ˇ","ˋ","˙"];
+ let tone="",base=z||"";
+ tones.forEach(t=>{if(base.includes(t)){tone=t;base=base.replace(t,"");}});
+ return {base,tone};
 }
-
-function saveLocalMemory(){
-  const data = {
-    words: document.getElementById("words").value,
-    defaultMode: document.getElementById("defaultMode").value,
-    fontColor: document.getElementById("fontColorText").value,
-    opacity: document.getElementById("opacity").value,
-    cellData: cellData
-  };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
-
-function loadLocalMemory(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return false;
-    const data = JSON.parse(raw);
-    if(data.words) document.getElementById("words").value = data.words;
-    if(data.defaultMode) document.getElementById("defaultMode").value = data.defaultMode;
-    if(data.fontColor){
-      document.getElementById("fontColorText").value = data.fontColor;
-      document.getElementById("fontColor").value = data.fontColor;
-    }
-    if(data.opacity) document.getElementById("opacity").value = data.opacity;
-    if(Array.isArray(data.cellData)){
-      cellData = data.cellData;
-      redrawBook();
-      return true;
-    }
-  }catch(e){}
-  return false;
-}
-
-function clearLocalMemory(){
-  if(confirm("確定要清除此裝置的本機記憶嗎？")){
-    localStorage.removeItem(STORAGE_KEY);
-    cellData = [];
-    document.getElementById("words").value = "";
-    document.getElementById("paper").innerHTML = "";
-  }
-}
-
-document.getElementById("fontColor").addEventListener("input",function(){
-  document.getElementById("fontColorText").value=this.value;
-  redrawBook();
-});
-
-document.getElementById("fontColorText").addEventListener("input",function(){
-  if(/^#[0-9A-Fa-f]{6}$/.test(this.value)){
-    document.getElementById("fontColor").value=this.value;
-  }
-  redrawBook();
-});
 
 function generateBook(){
-  const text = cleanText(document.getElementById("words").value);
-  const defaultMode = document.getElementById("defaultMode").value;
-  cellData = [];
-
-  if(!text){
-    alert("請先輸入文字");
-    document.getElementById("paper").innerHTML = "";
-    saveLocalMemory();
-    return;
-  }
-
-  cellData = [...text].map(ch=>({
-    char:ch,
-    zhuyin:getZhuyin(ch),
-    mode:defaultMode
-  }));
-
-  redrawBook();
+ const text=cleanText(document.getElementById("words").value);
+ const defaultMode=document.getElementById("defaultMode").value;
+ cellData=[];
+ if(!text){document.getElementById("paper").innerHTML="";saveLocalMemory();return;}
+ cellData=[...text].map(ch=>({char:ch,zhuyin:getZhuyin(ch),mode:defaultMode}));
+ redrawBook();
 }
 
 function generateBlankBook(){
-  cellData = [];
-  for(let i=0;i<100;i++){
-    cellData.push({char:"", zhuyin:"", mode:"blank"});
-  }
-  redrawBook();
+ cellData=[];
+ for(let i=0;i<100;i++) cellData.push({char:"",zhuyin:"",mode:"blank"});
+ redrawBook();
 }
 
 function redrawBook(){
-  const cellsPerPage = 100;
-  const pages = [];
-
-  if(cellData.length === 0){
-    document.getElementById("paper").innerHTML = "";
-    saveLocalMemory();
-    return;
+ if(cellData.length===0){document.getElementById("paper").innerHTML="";return;}
+ let html="";
+ for(let p=0;p<cellData.length;p+=100){
+  const pageItems=cellData.slice(p,p+100);
+  html+=`<div class="page"><div class="grid">`;
+  for(let r=0;r<10;r++){
+   for(let c=0;c<10;c++){
+    const indexInPage=c*10+r;
+    const globalIndex=p+indexInPage;
+    html+=createCell(pageItems[indexInPage],globalIndex);
+   }
   }
-
-  for(let i=0;i<cellData.length;i+=cellsPerPage){
-    pages.push(cellData.slice(i,i+cellsPerPage));
-  }
-
-  let html = "";
-
-  pages.forEach((pageItems,pageIndex)=>{
-    html += `<div class="page"><div class="grid">`;
-
-    for(let r=0;r<10;r++){
-      for(let c=0;c<10;c++){
-        const indexInPage = c*10+r;
-        const globalIndex = pageIndex*cellsPerPage+indexInPage;
-        const item = pageItems[indexInPage];
-        html += createCell(item, globalIndex);
-      }
-    }
-
-    html += `</div></div>`;
-  });
-
-  document.getElementById("paper").innerHTML = html;
-  saveLocalMemory();
+  html+=`</div></div>`;
+ }
+ document.getElementById("paper").innerHTML=html;
+ saveLocalMemory();
 }
 
 function createCell(item,index){
-  if(!item) return emptyCell();
-
-  const fontColor = document.getElementById("fontColorText").value || "#111827";
-  const opacity = document.getElementById("opacity").value;
-
-  let showChar = true;
-  let showZhuyin = true;
-  let charOpacity = 1;
-  let tag = "全";
-
-  if(item.mode === "zhuyinOnly"){showChar=false;showZhuyin=true;tag="音";}
-  if(item.mode === "charOnly"){showChar=true;showZhuyin=false;tag="字";}
-  if(item.mode === "trace"){showChar=true;showZhuyin=true;charOpacity=opacity;tag="描";}
-  if(item.mode === "blank"){showChar=false;showZhuyin=false;tag="空";}
-
-  const z = showZhuyin ? item.zhuyin : "";
-  const zh = splitZhuyin(z);
-  const zhuyinHtml = renderZhuyin(zh.base, zh.tone);
-
-  return `
-    <div class="cell"
-      onclick="toggleCell(${index})"
-      ondblclick="editZhuyin(${index})"
-      ontouchstart="startLongPress(${index})"
-      ontouchend="cancelLongPress()"
-      ontouchmove="cancelLongPress()">
-      <div class="zhuyinBox">
-        ${zhuyinHtml}
-      </div>
-      <div class="charBox" style="font-size:9.9mm;">
-        <div class="diagonal1"></div>
-        <div class="diagonal2"></div>
-        <span class="${showChar ? "sampleChar" : "hiddenChar"}"
-              style="color:${fontColor};opacity:${charOpacity};">${item.char}</span>
-      </div>
-      <div class="statusTag">${tag}</div>
-    </div>
-  `;
+ if(!item) return emptyCell();
+ const fontColor=document.getElementById("fontColorText").value||"#111827";
+ const opacity=document.getElementById("opacity").value;
+ let showChar=true,showZhuyin=true,charOpacity=1,tag="全";
+ if(item.mode==="zhuyinOnly"){showChar=false;showZhuyin=true;tag="音";}
+ if(item.mode==="charOnly"){showChar=true;showZhuyin=false;tag="字";}
+ if(item.mode==="trace"){showChar=true;showZhuyin=true;charOpacity=opacity;tag="描";}
+ if(item.mode==="blank"){showChar=false;showZhuyin=false;tag="空";}
+ const zh=splitZhuyin(showZhuyin?item.zhuyin:"");
+ return `
+ <div class="cell" onclick="toggleCell(${index})" ondblclick="openZhuyinMenu(${index})"
+ ontouchstart="startLongPress(${index})" ontouchend="cancelLongPress()" ontouchmove="cancelLongPress()">
+   <div class="zhuyinBox">${renderZhuyin(zh.base,zh.tone)}</div>
+   <div class="charBox" style="font-size:10mm;">
+     <div class="diagonal1"></div><div class="diagonal2"></div>
+     <span class="${showChar?'sampleChar':'hiddenChar'}" style="color:${fontColor};opacity:${charOpacity};">${item.char}</span>
+   </div>
+   <div class="statusTag">${tag}</div>
+ </div>`;
 }
 
 function renderZhuyin(base,tone){
-  if(!base && !tone) return "";
-
-  const chars = [...base];
-  const count = chars.length;
-
-  let positions = [];
-
-  if(count === 1){
-    positions = [45];
-  }else if(count === 2){
-    positions = [34,56];
-  }else{
-    positions = [26,46,66];
-  }
-
-  let html = "";
-
-  chars.forEach((ch,i)=>{
-    html += `<span class="zhuyinSymbol" style="top:${positions[i]}%;">${ch}</span>`;
-  });
-
-  if(tone){
-    let toneTop = 55;
-    if(count === 1) toneTop = 56;
-    if(count === 2) toneTop = (positions[0] + positions[1]) / 2;
-    if(count >= 3) toneTop = (positions[count-2] + positions[count-1]) / 2;
-
-    html += `<span class="toneMark" style="top:${toneTop}%;">${tone}</span>`;
-  }
-
-  return html;
+ if(!base&&!tone) return "";
+ const chars=[...base];
+ const count=chars.length;
+ let pos=[];
+ if(count===1) pos=[50];
+ if(count===2) pos=[38,62];
+ if(count>=3) pos=[27,50,73];
+ let html=`<div class="toneCol">`;
+ if(tone){
+   let toneTop=50;
+   if(count===1) toneTop=58;
+   if(count===2) toneTop=(pos[0]+pos[1])/2;
+   if(count>=3) toneTop=(pos[count-2]+pos[count-1])/2;
+   html+=`<span class="toneMark" style="top:${toneTop}%;">${tone}</span>`;
+ }
+ html+=`</div><div class="baseCol">`;
+ chars.forEach((ch,i)=>{html+=`<span class="zhuyinSymbol" style="top:${pos[i]}%;">${ch}</span>`;});
+ html+=`</div>`;
+ return html;
 }
 
 function emptyCell(){
-  return `
-    <div class="cell">
-      <div class="zhuyinBox"></div>
-      <div class="charBox">
-        <div class="diagonal1"></div>
-        <div class="diagonal2"></div>
-      </div>
-    </div>
-  `;
+ return `<div class="cell"><div class="zhuyinBox"></div><div class="charBox"><div class="diagonal1"></div><div class="diagonal2"></div></div></div>`;
 }
 
 function toggleCell(index){
-  if(!cellData[index]) return;
-  const order = ["both","zhuyinOnly","charOnly","trace","blank"];
-  const current = cellData[index].mode || "both";
-  const next = order[(order.indexOf(current)+1)%order.length];
-  cellData[index].mode = next;
-  redrawBook();
+ if(!cellData[index])return;
+ const order=["both","zhuyinOnly","charOnly","trace","blank"];
+ const current=cellData[index].mode||"both";
+ cellData[index].mode=order[(order.indexOf(current)+1)%order.length];
+ redrawBook();
 }
 
 function startLongPress(index){
-  longPressTimer = setTimeout(()=>{
-    editZhuyin(index);
-  },600);
+ longPressTimer=setTimeout(()=>openZhuyinMenu(index),600);
 }
-
 function cancelLongPress(){
-  if(longPressTimer){
-    clearTimeout(longPressTimer);
-    longPressTimer = null;
-  }
+ if(longPressTimer){clearTimeout(longPressTimer);longPressTimer=null;}
 }
 
-function editZhuyin(index){
-  if(!cellData[index]) return;
-
-  const ch = cellData[index].char;
-  let suggestions = polyphoneMap[ch] || [];
-  if(cellData[index].zhuyin && !suggestions.includes(cellData[index].zhuyin)){
-    suggestions.unshift(cellData[index].zhuyin);
-  }
-
-  let message = `請輸入「${ch}」的注音：`;
-  if(suggestions.length>0){
-    message += `\n可選：${suggestions.join(" / ")}`;
-  }
-
-  const result = prompt(message, cellData[index].zhuyin || "");
-  if(result !== null){
-    cellData[index].zhuyin = result.trim();
-    redrawBook();
-  }
+function openZhuyinMenu(index){
+ editingIndex=index;
+ const item=cellData[index];
+ if(!item)return;
+ const options=polyphoneMap[item.char]||[item.zhuyin||""];
+ document.getElementById("modalTitle").textContent=`選擇「${item.char}」的注音`;
+ let html="";
+ options.filter(Boolean).forEach(z=>{
+   html+=`<button class="optionBtn" onclick="chooseZhuyin('${z}')">${z}</button>`;
+ });
+ document.getElementById("optionArea").innerHTML=html || "<p>目前沒有備選音，可使用自訂注音。</p>";
+ document.getElementById("modal").style.display="flex";
 }
 
+function chooseZhuyin(z){
+ if(editingIndex!==null){
+   cellData[editingIndex].zhuyin=z;
+   redrawBook();
+ }
+ closeModal();
+}
+
+function customZhuyin(){
+ const now=cellData[editingIndex]?.zhuyin||"";
+ const z=prompt("請輸入自訂注音：",now);
+ if(z!==null){chooseZhuyin(z.trim());}
+}
+
+function closeModal(){
+ document.getElementById("modal").style.display="none";
+ editingIndex=null;
+}
+
+function saveLocalMemory(){
+ localStorage.setItem(STORAGE_KEY,JSON.stringify({
+  words:document.getElementById("words").value,
+  defaultMode:document.getElementById("defaultMode").value,
+  fontColor:document.getElementById("fontColorText").value,
+  opacity:document.getElementById("opacity").value,
+  cellData
+ }));
+}
+
+function loadLocalMemory(){
+ try{
+  const raw=localStorage.getItem(STORAGE_KEY);
+  if(!raw)return false;
+  const data=JSON.parse(raw);
+  if(data.words)document.getElementById("words").value=data.words;
+  if(data.defaultMode)document.getElementById("defaultMode").value=data.defaultMode;
+  if(data.fontColor){
+   document.getElementById("fontColorText").value=data.fontColor;
+   document.getElementById("fontColor").value=data.fontColor;
+  }
+  if(data.opacity)document.getElementById("opacity").value=data.opacity;
+  if(Array.isArray(data.cellData)){cellData=data.cellData;redrawBook();return true;}
+ }catch(e){}
+ return false;
+}
+
+function clearLocalMemory(){
+ if(confirm("確定清除此裝置記憶？")){
+  localStorage.removeItem(STORAGE_KEY);
+  cellData=[];
+  document.getElementById("words").value="";
+  document.getElementById("paper").innerHTML="";
+ }
+}
+
+document.getElementById("fontColor").addEventListener("input",function(){
+ document.getElementById("fontColorText").value=this.value;redrawBook();
+});
+document.getElementById("fontColorText").addEventListener("input",function(){redrawBook();});
 ["words","defaultMode","opacity"].forEach(id=>{
-  document.getElementById(id).addEventListener("change",function(){
-    if(id==="words" || id==="defaultMode"){
-      generateBook();
-    }else{
-      redrawBook();
-    }
-  });
+ document.getElementById(id).addEventListener("change",()=>id==="opacity"?redrawBook():generateBook());
 });
 
-window.addEventListener("beforeunload", saveLocalMemory);
-
-if(!loadLocalMemory()){
-  generateBook();
-}
+if(!loadLocalMemory())generateBook();
 </script>
 
 </body>
