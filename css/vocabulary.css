@@ -148,9 +148,9 @@ button.green{background:#0f766e;}
   color:#000;
 }
 
-.z-base span{
+.z-base > span:not(.tone-mark){
   position:absolute;
-  left:50%;
+  left:45%;
   transform:translate(-50%,-50%);
   font-size:16px;
   line-height:1;
@@ -158,6 +158,15 @@ button.green{background:#0f766e;}
   color:#000;
 }
 
+.tone-mark{
+  position:absolute;
+  left:82%;
+  transform:translate(-50%,-50%);
+  font-size:14px;
+  line-height:1;
+  font-weight:900;
+  color:#000;
+}
 .status{
   position:absolute;
   left:1px;
