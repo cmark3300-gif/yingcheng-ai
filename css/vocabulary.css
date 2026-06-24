@@ -1,9 +1,10 @@
-/* 穎橙 AI 生字簿 V9 */
+/* 穎橙 AI 生字簿 V9.1 */
 
 body{
   margin:0;
   font-family:"Microsoft JhengHei",sans-serif;
   background:#f4f7fb;
+  color:#1f2937;
 }
 
 header{
@@ -13,38 +14,60 @@ header{
   padding:18px;
 }
 
+button{
+  padding:12px 18px;
+  margin-right:8px;
+  border:0;
+  border-radius:8px;
+  background:#2563eb;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  opacity:.9;
+}
+
 .page{
   width:210mm;
   min-height:297mm;
-  margin:auto;
+  margin:20px auto;
   background:white;
   padding:8mm;
   box-sizing:border-box;
+  overflow:hidden;
 }
 
-/* 波波式格子 */
-
+/* 10欄 × 10列 */
 .grid{
   display:grid;
-  grid-template-columns:repeat(10,1fr);
-  gap:0;
+  grid-template-columns:repeat(10, 22mm);
+  grid-template-rows:repeat(10, 22mm);
+  justify-content:center;
 }
 
+/* 每一格：國字正方格 + 右側注音欄 */
 .word-cell{
+  width:22mm;
+  height:22mm;
   display:flex;
-  align-items:stretch;
+  flex-direction:row;
+  box-sizing:border-box;
 }
 
-/* 正方形田字格 */
-
+/* 波波式正方形田字格 */
 .char-grid{
   width:16mm;
   height:16mm;
   position:relative;
-  border:1px solid #333;
+  border:1.2px solid #2563eb;
   box-sizing:border-box;
+  background:white;
 }
 
+/* 田字格中線 */
 .char-grid::before{
   content:"";
   position:absolute;
@@ -63,12 +86,13 @@ header{
   border-top:1px dashed #7db4ff;
 }
 
+/* 斜線 */
 .diag1,
 .diag2{
   position:absolute;
-  width:140%;
+  width:142%;
   border-top:1px dashed #bcd7ff;
-  left:-20%;
+  left:-21%;
   top:50%;
 }
 
@@ -80,12 +104,60 @@ header{
   transform:rotate(-45deg);
 }
 
-/* 注音欄獨立 */
-
+/* 注音欄：獨立，不壓縮田字格 */
 .zhuyin-grid{
   width:6mm;
   height:16mm;
-  border:1px solid #333;
+  border:1.2px solid #2563eb;
   border-left:none;
+  box-sizing:border-box;
+  background:white;
   position:relative;
+}
+
+/* 手機版 */
+@media screen and (max-width:768px){
+  header h1{
+    font-size:22px;
+  }
+
+  .page{
+    margin:10px 0;
+    width:max-content;
+    min-height:auto;
+    padding:6mm;
+  }
+
+  main{
+    overflow-x:auto;
+  }
+
+  button{
+    display:block;
+    width:100%;
+    margin:8px 0;
+    font-size:18px;
+  }
+}
+
+/* 列印 */
+@media print{
+  header,
+  textarea,
+  button,
+  h2{
+    display:none !important;
+  }
+
+  body{
+    background:white;
+  }
+
+  .page{
+    margin:0;
+    width:210mm;
+    height:297mm;
+    padding:8mm;
+    page-break-after:always;
+  }
 }
