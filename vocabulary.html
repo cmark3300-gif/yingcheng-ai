@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>生字簿產生器 V5｜穎橙 AI 智慧學習</title>
+<title>生字簿產生器 V6｜穎橙 AI 智慧學習</title>
 
 <style>
 body{margin:0;font-family:"Microsoft JhengHei",Arial,sans-serif;background:#f4f7fb;color:#1f2937;}
-header{background:linear-gradient(90deg,#2563eb,#f97316);color:white;padding:26px 20px;text-align:center;}
+header{background:linear-gradient(90deg,#2563eb,#f97316);color:white;padding:24px 20px;text-align:center;}
 .container{display:flex;gap:20px;padding:20px;}
 .panel{background:white;border-radius:14px;padding:22px;box-shadow:0 3px 12px rgba(0,0,0,.08);}
 .left{width:390px;}
@@ -17,7 +17,7 @@ textarea,select,input{width:100%;box-sizing:border-box;padding:10px;margin-top:6
 button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;color:white;font-weight:bold;font-size:16px;cursor:pointer;}
 .generate{background:#2563eb;}
 .print{background:#f97316;}
-.note{font-size:14px;color:#6b7280;margin-top:10px;}
+.note{font-size:14px;color:#6b7280;margin-top:10px;line-height:1.6;}
 .paper{background:#e5e7eb;padding:20px;min-height:650px;overflow:auto;}
 
 .page{
@@ -47,25 +47,35 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
   flex-direction:row-reverse;
   box-sizing:border-box;
   background:white;
+  cursor:pointer;
+}
+
+.cell:hover{
+  background:#fff7ed;
 }
 
 .zhuyinBox{
-  width:32%;
+  width:34%;
   height:100%;
   border-left:1px solid #999;
-  writing-mode:vertical-rl;
-  text-orientation:upright;
   display:flex;
   align-items:center;
   justify-content:center;
-  line-height:1.15;
   box-sizing:border-box;
   color:#111827;
-  letter-spacing:1px;
+  font-family:"Microsoft JhengHei",Arial,sans-serif;
+}
+
+.zhuyinInner{
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+  line-height:1.05;
+  letter-spacing:0;
+  white-space:nowrap;
 }
 
 .charBox{
-  width:68%;
+  width:66%;
   height:100%;
   position:relative;
   display:flex;
@@ -100,16 +110,28 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
   top:50%;
   left:-10%;
 }
+
 .diagonal1{transform:rotate(45deg);}
 .diagonal2{transform:rotate(-45deg);}
+
 .sampleChar{z-index:2;}
 .hiddenChar{color:transparent!important;}
+
+.statusTag{
+  position:absolute;
+  left:2px;
+  bottom:1px;
+  font-size:9px;
+  color:#2563eb;
+  background:rgba(255,255,255,.8);
+  z-index:3;
+}
 
 .row2{display:flex;gap:10px;align-items:center;}
 .row2 input[type="color"]{height:42px;padding:2px;}
 
 @media print{
-  header,.left,.right h2{display:none;}
+  header,.left,.right h2,.statusTag{display:none;}
   body{background:white;}
   .container{display:block;padding:0;}
   .right{box-shadow:none;padding:0;}
@@ -121,6 +143,7 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
     padding:10mm;
     page-break-after:always;
   }
+  .cell:hover{background:white;}
 }
 </style>
 </head>
@@ -129,15 +152,15 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
 
 <header>
   <h1>穎橙 AI 智慧學習</h1>
-  <p>生字簿產生器 V5｜整段文字＋指定字特別設定</p>
+  <p>生字簿產生器 V6｜點選方格切換國字與注音</p>
 </header>
 
 <div class="container">
 
 <div class="panel left">
 
-<label>輸入整段文字</label>
-<textarea id="words" rows="5" placeholder="例如：小明今天到學校上課">小明今天到學校上課</textarea>
+<label>輸入詞語或句子</label>
+<textarea id="words" rows="6" placeholder="例如：黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細">黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細</textarea>
 
 <label>表格大小</label>
 <select id="gridSize">
@@ -146,29 +169,14 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
   <option value="12">12 × 12</option>
 </select>
 
-<label>一般文字設定</label>
-<select id="normalMode">
-  <option value="both" selected>國字＋注音都顯示</option>
-  <option value="charOnly">只顯示國字</option>
+<label>預設顯示模式</label>
+<select id="defaultMode">
+  <option value="both" selected>國字＋注音</option>
   <option value="zhuyinOnly">只顯示注音</option>
-  <option value="hideChar">隱藏國字，只留注音</option>
-  <option value="hideZhuyin">隱藏注音，只留國字</option>
+  <option value="charOnly">只顯示國字</option>
+  <option value="trace">描寫</option>
+  <option value="blank">空白</option>
 </select>
-
-<label>只顯示注音的字</label>
-<input id="zhuyinOnlyChars" placeholder="例如：今、明">
-
-<label>只顯示國字的字</label>
-<input id="charOnlyChars" placeholder="例如：校、課">
-
-<label>描寫字</label>
-<input id="traceChars" placeholder="例如：學、習">
-
-<label>隱藏國字的字</label>
-<input id="hideCharChars" placeholder="例如：天、上">
-
-<label>隱藏注音的字</label>
-<input id="hideZhuyinChars" placeholder="例如：小、到">
 
 <label>字體顏色</label>
 <div class="row2">
@@ -181,7 +189,7 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
   <option value="1">100%</option>
   <option value="0.75">75%</option>
   <option value="0.5">50%</option>
-  <option value="0.25" selected>25%（適合描寫）</option>
+  <option value="0.25" selected>25%</option>
   <option value="0.1">10%</option>
 </select>
 
@@ -189,7 +197,9 @@ button{width:100%;padding:13px;margin-top:18px;border:none;border-radius:9px;col
 <button class="print" onclick="window.print()">列印／另存 PDF</button>
 
 <p class="note">
-V5：可輸入整段文字，預設國字與注音都顯示，也可指定某些字只顯示國字、只顯示注音、描寫或隱藏。
+使用方式：產生後直接點每個方格切換。<br>
+切換順序：國字＋注音 → 只顯示注音 → 只顯示國字 → 描寫 → 空白。<br>
+破音字可在下一版加入「點格修改注音」功能。
 </p>
 
 </div>
@@ -203,77 +213,79 @@ V5：可輸入整段文字，預設國字與注音都顯示，也可指定某些
 
 <script>
 const zhuyinMap = {
+  "黃":"ㄏㄨㄤˊ","狗":"ㄍㄡˇ","公":"ㄍㄨㄥ","雞":"ㄐㄧ",
+  "經":"ㄐㄧㄥ","過":"ㄍㄨㄛˋ","奇":"ㄑㄧˊ","怪":"ㄍㄨㄞˋ",
+  "山":"ㄕㄢ","羊":"ㄧㄤˊ","鴨":"ㄧㄚ","子":"ㄗˇ",
+  "信":"ㄒㄧㄣˋ","用":"ㄩㄥˋ","錯":"ㄘㄨㄛˋ","誤":"ㄨˋ",
+  "眼":"ㄧㄢˇ","睛":"ㄐㄧㄥ","仔":"ㄗˇ","細":"ㄒㄧˋ",
   "小":"ㄒㄧㄠˇ","明":"ㄇㄧㄥˊ","今":"ㄐㄧㄣ","天":"ㄊㄧㄢ",
   "到":"ㄉㄠˋ","學":"ㄒㄩㄝˊ","校":"ㄒㄧㄠˋ","上":"ㄕㄤˋ",
   "課":"ㄎㄜˋ","後":"ㄏㄡˋ","產":"ㄔㄢˇ","出":"ㄔㄨ",
   "表":"ㄅㄧㄠˇ","格":"ㄍㄜˊ","國":"ㄍㄨㄛˊ","語":"ㄩˇ",
   "習":"ㄒㄧˊ","生":"ㄕㄥ","字":"ㄗˋ","地":"ㄉㄧˋ",
-  "人":"ㄖㄣˊ","大":"ㄉㄚˋ","中":"ㄓㄨㄥ","山":"ㄕㄢ",
-  "水":"ㄕㄨㄟˇ","火":"ㄏㄨㄛˇ","木":"ㄇㄨˋ","金":"ㄐㄧㄣ",
-  "土":"ㄊㄨˇ","日":"ㄖˋ","月":"ㄩㄝˋ","我":"ㄨㄛˇ",
-  "你":"ㄋㄧˇ","他":"ㄊㄚ","她":"ㄊㄚ","好":"ㄏㄠˇ"
+  "人":"ㄖㄣˊ","大":"ㄉㄚˋ","中":"ㄓㄨㄥ","水":"ㄕㄨㄟˇ",
+  "火":"ㄏㄨㄛˇ","木":"ㄇㄨˋ","金":"ㄐㄧㄣ","土":"ㄊㄨˇ",
+  "日":"ㄖˋ","月":"ㄩㄝˋ","我":"ㄨㄛˇ","你":"ㄋㄧˇ",
+  "他":"ㄊㄚ","她":"ㄊㄚ","好":"ㄏㄠˇ"
 };
+
+let cellData = [];
 
 function getZhuyin(ch){
   return zhuyinMap[ch] || "";
 }
 
-function parseChars(str){
-  return str.replace(/[，,、\s]/g,"").split("");
+function cleanText(text){
+  return text.replace(/[，,、。！？；：「」『』（）()《》〈〉\n\r\t]/g,"").replace(/\s/g,"");
 }
 
 document.getElementById("fontColor").addEventListener("input",function(){
   document.getElementById("fontColorText").value=this.value;
-  generateBook();
+  redrawBook();
 });
 
 document.getElementById("fontColorText").addEventListener("input",function(){
   document.getElementById("fontColor").value=this.value;
-  generateBook();
+  redrawBook();
 });
 
 function generateBook(){
-  const text=document.getElementById("words").value.replace(/\s/g,"");
-  const gridSize=Number(document.getElementById("gridSize").value);
-  const normalMode=document.getElementById("normalMode").value;
-  const fontColor=document.getElementById("fontColorText").value || "#111827";
-  const opacity=document.getElementById("opacity").value;
-
-  const zhuyinOnlyChars=parseChars(document.getElementById("zhuyinOnlyChars").value);
-  const charOnlyChars=parseChars(document.getElementById("charOnlyChars").value);
-  const traceChars=parseChars(document.getElementById("traceChars").value);
-  const hideCharChars=parseChars(document.getElementById("hideCharChars").value);
-  const hideZhuyinChars=parseChars(document.getElementById("hideZhuyinChars").value);
+  const text = cleanText(document.getElementById("words").value);
+  const defaultMode = document.getElementById("defaultMode").value;
 
   if(!text){
     alert("請先輸入文字");
     return;
   }
 
-  let items=[...text].map(ch=>{
-    let mode=normalMode;
+  cellData = [...text].map(ch=>({
+    char:ch,
+    zhuyin:getZhuyin(ch),
+    mode:defaultMode
+  }));
 
-    if(zhuyinOnlyChars.includes(ch)) mode="zhuyinOnly";
-    if(charOnlyChars.includes(ch)) mode="charOnly";
-    if(traceChars.includes(ch)) mode="trace";
-    if(hideCharChars.includes(ch)) mode="hideChar";
-    if(hideZhuyinChars.includes(ch)) mode="hideZhuyin";
+  redrawBook();
+}
 
-    return {char:ch,mode:mode};
-  });
+function redrawBook(){
+  if(cellData.length===0){
+    generateBook();
+    return;
+  }
 
+  const gridSize=Number(document.getElementById("gridSize").value);
   const cellsPerPage=gridSize*gridSize;
   const pages=[];
 
-  for(let i=0;i<items.length;i+=cellsPerPage){
-    pages.push(items.slice(i,i+cellsPerPage));
+  for(let i=0;i<cellData.length;i+=cellsPerPage){
+    pages.push(cellData.slice(i,i+cellsPerPage));
   }
 
   const cellSize=gridSize===8 ? 22 : gridSize===10 ? 18 : 15;
 
   let html="";
 
-  pages.forEach(pageItems=>{
+  pages.forEach((pageItems,pageIndex)=>{
     html+=`
       <div class="page">
         <div class="grid"
@@ -285,9 +297,10 @@ function generateBook(){
 
     for(let r=0;r<gridSize;r++){
       for(let c=0;c<gridSize;c++){
-        const index=c*gridSize+r;
-        const item=pageItems[index];
-        html+=createCell(item,cellSize,fontColor,opacity);
+        const indexInPage=c*gridSize+r;
+        const globalIndex=pageIndex*cellsPerPage+indexInPage;
+        const item=pageItems[indexInPage];
+        html+=createCell(item,cellSize,globalIndex);
       }
     }
 
@@ -297,64 +310,98 @@ function generateBook(){
   document.getElementById("paper").innerHTML=html;
 }
 
-function createCell(item,cellSize,fontColor,opacity){
-  if(!item){item={char:"",mode:"both"};}
+function createCell(item,cellSize,index){
+  if(!item){
+    return emptyCell(cellSize);
+  }
 
-  const ch=item.char || "";
-  const mode=item.mode;
+  const fontColor=document.getElementById("fontColorText").value || "#111827";
+  const opacity=document.getElementById("opacity").value;
+
   let showChar=true;
   let showZhuyin=true;
   let charOpacity=1;
+  let tag="全";
 
-  if(mode==="charOnly"){
+  if(item.mode==="both"){
     showChar=true;
-    showZhuyin=false;
+    showZhuyin=true;
+    tag="全";
   }
 
-  if(mode==="zhuyinOnly"){
+  if(item.mode==="zhuyinOnly"){
     showChar=false;
     showZhuyin=true;
+    tag="音";
   }
 
-  if(mode==="hideChar"){
-    showChar=false;
-    showZhuyin=true;
-  }
-
-  if(mode==="hideZhuyin"){
+  if(item.mode==="charOnly"){
     showChar=true;
     showZhuyin=false;
+    tag="字";
   }
 
-  if(mode==="trace"){
+  if(item.mode==="trace"){
     showChar=true;
     showZhuyin=true;
     charOpacity=opacity;
+    tag="描";
   }
 
-  const z=showZhuyin && ch ? getZhuyin(ch) : "";
+  if(item.mode==="blank"){
+    showChar=false;
+    showZhuyin=false;
+    tag="空";
+  }
+
   const fontSize=cellSize*0.55;
-  const displayClass=showChar ? "sampleChar" : "hiddenChar";
-  const style=`color:${fontColor};opacity:${charOpacity};`;
+  const z=showZhuyin ? item.zhuyin : "";
+  const ch=showChar ? item.char : item.char;
 
   return `
-    <div class="cell">
-      <div class="zhuyinBox" style="font-size:${cellSize*0.18}mm;">${z}</div>
+    <div class="cell" onclick="toggleCell(${index})">
+      <div class="zhuyinBox" style="font-size:${cellSize*0.2}mm;">
+        <div class="zhuyinInner">${z}</div>
+      </div>
       <div class="charBox" style="font-size:${fontSize}mm;">
         <div class="diagonal1"></div>
         <div class="diagonal2"></div>
-        <span class="${displayClass}" style="${style}">${ch}</span>
+        <span class="${showChar ? "sampleChar" : "hiddenChar"}"
+              style="color:${fontColor};opacity:${charOpacity};">${ch}</span>
+      </div>
+      <div class="statusTag">${tag}</div>
+    </div>
+  `;
+}
+
+function emptyCell(cellSize){
+  return `
+    <div class="cell">
+      <div class="zhuyinBox"></div>
+      <div class="charBox">
+        <div class="diagonal1"></div>
+        <div class="diagonal2"></div>
       </div>
     </div>
   `;
 }
 
-[
-"words","gridSize","normalMode","zhuyinOnlyChars","charOnlyChars",
-"traceChars","hideCharChars","hideZhuyinChars","opacity"
-].forEach(id=>{
-  document.getElementById(id).addEventListener("input",generateBook);
-  document.getElementById(id).addEventListener("change",generateBook);
+function toggleCell(index){
+  const order=["both","zhuyinOnly","charOnly","trace","blank"];
+  const current=cellData[index].mode;
+  const next=order[(order.indexOf(current)+1)%order.length];
+  cellData[index].mode=next;
+  redrawBook();
+}
+
+["words","gridSize","defaultMode","opacity"].forEach(id=>{
+  document.getElementById(id).addEventListener("change",function(){
+    if(id==="words" || id==="defaultMode"){
+      generateBook();
+    }else{
+      redrawBook();
+    }
+  });
 });
 
 generateBook();
