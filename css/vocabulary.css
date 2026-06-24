@@ -104,15 +104,23 @@ button.green{background:#0f766e;}
 }
 
 .z-base span{
-  font-size:20px;
+  position:absolute;
+  left:35%;
+  transform:translate(-50%,-50%);
+  font-size:19px;
+  line-height:1;
   font-weight:900;
+  color:#000;
 }
-
 .z-tone{
-  font-size:18px;
+  position:absolute;
+  right:0.5px;
+  transform:translateY(-50%);
+  font-size:15px;
+  line-height:1;
   font-weight:900;
+  color:#000;
 }
-
 .status{
   position:absolute;
   left:1px;
