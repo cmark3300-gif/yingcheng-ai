@@ -1,4 +1,4 @@
-const STORAGE_KEY = "yc_vocab_v10a";
+const STORAGE_KEY = "yc_vocab_v10b";
 
 let cellData = [];
 let zhuyinMap = {};
@@ -11,6 +11,11 @@ document.getElementById("app").innerHTML = `
 
   <label>輸入詞語或句子</label>
   <textarea id="words" rows="5">黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細</textarea>
+
+  <label>本課生字</label>
+  <textarea id="lessonChars" rows="3" placeholder="例如：狗 雞 經 怪 羊 鴨 信 錯 睛 仔">狗 雞 經 怪 羊 鴨 信 錯 睛 仔</textarea>
+
+  <button class="green" onclick="applyLessonChars()">套用生字</button>
 
   <label>預設顯示模式</label>
   <select id="defaultMode">
@@ -35,7 +40,7 @@ document.getElementById("app").innerHTML = `
   <button class="secondary" onclick="window.print()">列印／PDF</button>
 
   <p>
-    V10-A：產生後會出現「生字管理表」，可一次管理每個字的顯示方式。<br>
+    V10-B：可輸入「本課生字」，按「套用生字」後，生字會自動變成只顯示注音，其餘字保留國字＋注音。<br>
     點格切換：全 → 音 → 字 → 描 → 空。雙擊格子可選破音字。
   </p>
 </div>
@@ -82,6 +87,10 @@ function cleanText(text){
   return text.replace(/[，,、。！？；：「」『』（）()《》〈〉\n\r\t\s]/g,"");
 }
 
+function parseChars(text){
+  return text.replace(/[，,、。！？；：「」『』（）()《》〈〉\n\r\t\s]/g,"").split("");
+}
+
 function getZhuyin(ch){
   const value = zhuyinMap[ch];
 
@@ -116,6 +125,31 @@ function generateBook(){
     zhuyin:getZhuyin(ch),
     mode:mode
   }));
+
+  render();
+}
+
+function applyLessonChars(){
+  if(!cellData.length){
+    generateBook();
+  }
+
+  const lessonChars = parseChars(document.getElementById("lessonChars").value);
+
+  if(lessonChars.length === 0){
+    alert("請先輸入本課生字");
+    return;
+  }
+
+  cellData.forEach(item=>{
+    if(!item.char) return;
+
+    if(lessonChars.includes(item.char)){
+      item.mode = "zhuyinOnly";
+    }else{
+      item.mode = "both";
+    }
+  });
 
   render();
 }
@@ -368,6 +402,7 @@ function closeZhuyinModal(){
 function saveWork(showAlert=true){
   localStorage.setItem(STORAGE_KEY,JSON.stringify({
     words:document.getElementById("words").value,
+    lessonChars:document.getElementById("lessonChars").value,
     mode:document.getElementById("defaultMode").value,
     fontColor:document.getElementById("fontColor").value,
     opacity:document.getElementById("opacity").value,
@@ -393,6 +428,9 @@ function loadWork(){
     document.getElementById("words").value =
       data.words || "黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細";
 
+    document.getElementById("lessonChars").value =
+      data.lessonChars || "狗 雞 經 怪 羊 鴨 信 錯 睛 仔";
+
     document.getElementById("defaultMode").value = data.mode || "both";
     document.getElementById("fontColor").value = data.fontColor || "#111827";
     document.getElementById("opacity").value = data.opacity || "0.25";
@@ -410,11 +448,14 @@ function loadWork(){
 }
 
 function clearWork(){
-  if(confirm("確定清除本機記憶？")){
+  if(confirm("確定清除此裝置記憶？")){
     localStorage.removeItem(STORAGE_KEY);
 
     document.getElementById("words").value =
       "黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細";
+
+    document.getElementById("lessonChars").value =
+      "狗 雞 經 怪 羊 鴨 信 錯 睛 仔";
 
     document.getElementById("defaultMode").value = "both";
     document.getElementById("fontColor").value = "#111827";
