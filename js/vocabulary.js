@@ -1,4 +1,4 @@
-const STORAGE_KEY = "yc_vocab_v96";
+const STORAGE_KEY = "yc_vocab_v97";
 
 let cellData = [];
 
@@ -7,20 +7,14 @@ const zhuyinMap = {
   "奇":"ㄑㄧˊ","怪":"ㄍㄨㄞˋ","山":"ㄕㄢ","羊":"ㄧㄤˊ","鴨":"ㄧㄚ","子":"ㄗˇ",
   "信":"ㄒㄧㄣˋ","用":"ㄩㄥˋ","錯":"ㄘㄨㄛˋ","誤":"ㄨˋ","眼":"ㄧㄢˇ","睛":"ㄐㄧㄥ",
   "仔":"ㄗˇ","細":"ㄒㄧˋ","不":"ㄅㄨˋ","可":"ㄎㄜˇ","以":"ㄧˇ",
-  "物":"ㄨˋ","種":"ㄓㄨㄥˇ","聽":"ㄊㄧㄥ","覺":"ㄐㄩㄝˊ",
-  "重":"ㄓㄨㄥˋ","行":"ㄒㄧㄥˊ","樂":"ㄩㄝˋ","長":"ㄔㄤˊ",
-  "學":"ㄒㄩㄝˊ","校":"ㄒㄧㄠˋ","生":"ㄕㄥ","字":"ㄗˋ",
-  "國":"ㄍㄨㄛˊ","語":"ㄩˇ","好":"ㄏㄠˇ","明":"ㄇㄧㄥˊ",
-  "今":"ㄐㄧㄣ","天":"ㄊㄧㄢ","小":"ㄒㄧㄠˇ"
+  "重":"ㄓㄨㄥˋ","行":"ㄒㄧㄥˊ","樂":"ㄩㄝˋ","長":"ㄔㄤˊ"
 };
 
 const polyphoneMap = {
   "重":["ㄓㄨㄥˋ","ㄔㄨㄥˊ"],
   "行":["ㄒㄧㄥˊ","ㄏㄤˊ"],
   "樂":["ㄌㄜˋ","ㄩㄝˋ"],
-  "長":["ㄔㄤˊ","ㄓㄤˇ"],
-  "種":["ㄓㄨㄥˇ","ㄓㄨㄥˋ"],
-  "覺":["ㄐㄩㄝˊ","ㄐㄧㄠˋ"]
+  "長":["ㄔㄤˊ","ㄓㄤˇ"]
 };
 
 document.getElementById("app").innerHTML = `
@@ -39,17 +33,11 @@ document.getElementById("app").innerHTML = `
     <option value="blank">空白</option>
   </select>
 
-  <div class="row">
-    <div style="flex:1;">
-      <label>字體顏色</label>
-      <input type="color" id="fontColor" value="#111827">
-    </div>
+  <label>字體顏色</label>
+  <input type="color" id="fontColor" value="#111827">
 
-    <div style="flex:2;">
-      <label>描字深淺</label>
-      <input type="range" id="opacity" min="0.1" max="1" step="0.1" value="0.25">
-    </div>
-  </div>
+  <label>描字深淺</label>
+  <input type="range" id="opacity" min="0.1" max="1" step="0.1" value="0.25">
 
   <button onclick="generateBook()">產生生字簿</button>
   <button class="green" onclick="generateBlank()">空白生字簿</button>
@@ -60,14 +48,25 @@ document.getElementById("app").innerHTML = `
 
   <p>
     點格切換：全 → 音 → 字 → 描 → 空。<br>
-    雙擊格子可修改破音字或自訂注音。
+    雙擊格子可選破音字。
   </p>
 </div>
 
 <div class="paper-wrap">
   <div id="preview"></div>
 </div>
+
+<div id="zhuyinModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:14px;padding:20px;width:min(90vw,380px);box-shadow:0 8px 30px rgba(0,0,0,.25);">
+    <h3 id="modalTitle">選擇注音</h3>
+    <div id="modalOptions"></div>
+    <button class="green" onclick="customZhuyin()">自訂注音</button>
+    <button class="secondary" onclick="closeZhuyinModal()">取消</button>
+  </div>
+</div>
 `;
+
+let editingIndex = null;
 
 function cleanText(text){
   return text.replace(/[，,、。！？；：「」『』（）()《》〈〉\n\r\t\s]/g,"");
@@ -111,7 +110,6 @@ function generateBlank(){
     zhuyin:"",
     mode:"blank"
   }));
-
   render();
 }
 
@@ -123,14 +121,12 @@ function render(){
     html += `<div class="page"><div class="grid">`;
 
     const page = cellData.slice(p*100,p*100+100);
-
     let dataIndex = 0;
 
     for(let col=10;col>=1;col--){
       for(let row=1;row<=10;row++){
         const globalIndex = p*100 + dataIndex;
-        const item = page[dataIndex];
-        html += cell(item,globalIndex,row,col);
+        html += cell(page[dataIndex],globalIndex,row,col);
         dataIndex++;
       }
     }
@@ -147,15 +143,8 @@ function cell(item,index,row,col){
     item = {char:"",zhuyin:"",mode:"blank"};
   }
 
-  const showChar =
-    item.mode === "both" ||
-    item.mode === "charOnly" ||
-    item.mode === "trace";
-
-  const showZ =
-    item.mode === "both" ||
-    item.mode === "zhuyinOnly" ||
-    item.mode === "trace";
+  const showChar = item.mode === "both" || item.mode === "charOnly" || item.mode === "trace";
+  const showZ = item.mode === "both" || item.mode === "zhuyinOnly" || item.mode === "trace";
 
   const tag =
     item.mode === "both" ? "全" :
@@ -164,9 +153,7 @@ function cell(item,index,row,col){
     item.mode === "trace" ? "描" : "空";
 
   const color = document.getElementById("fontColor")?.value || "#111827";
-  const opacity = item.mode === "trace"
-    ? (document.getElementById("opacity")?.value || "0.25")
-    : "1";
+  const opacity = item.mode === "trace" ? (document.getElementById("opacity")?.value || "0.25") : "1";
 
   const zh = splitZhuyin(showZ ? item.zhuyin : "");
 
@@ -174,7 +161,7 @@ function cell(item,index,row,col){
     <div class="word-cell"
       style="grid-row:${row};grid-column:${col};"
       onclick="toggle(${index})"
-      ondblclick="chooseZhuyin(${index})">
+      ondblclick="openZhuyinModal(${index})">
 
       <div class="char-grid">
         <div class="diag1"></div>
@@ -215,27 +202,12 @@ function renderZhuyin(base,tone){
   let html = `<div class="z-base">`;
 
   chars.forEach((ch,i)=>{
-    html += `
-      <span class="zhuyin-symbol" style="top:${pos[i]}%">
-        ${ch}
-      </span>
-    `;
+    html += `<span class="zhuyin-symbol" style="top:${pos[i]}%">${ch}</span>`;
   });
 
   if(tone){
-    let toneTop;
-
-    if(chars.length === 1){
-      toneTop = 28;
-    }else{
-      toneTop = pos[chars.length-1] - 8;
-    }
-
-    html += `
-      <span class="tone-mark" style="top:${toneTop}%">
-        ${tone}
-      </span>
-    `;
+    const toneTop = chars.length === 1 ? 28 : pos[chars.length-1] - 8;
+    html += `<span class="tone-mark" style="top:${toneTop}%">${tone}</span>`;
   }
 
   html += `</div>`;
@@ -253,31 +225,50 @@ function toggle(index){
   render();
 }
 
-function chooseZhuyin(index){
+function openZhuyinModal(index){
+  editingIndex = index;
   const item = cellData[index];
   if(!item) return;
 
-  const opts = polyphoneMap[item.char] || [];
+  const options = polyphoneMap[item.char] || [item.zhuyin || ""];
 
-  if(opts.length){
-    const msg = opts.map((z,n)=>`${n+1}. ${z}`).join("\\n");
-    const pick = prompt(
-      `選擇「${item.char}」讀音：\\n${msg}\\n或直接輸入注音`,
-      item.zhuyin
-    );
+  document.getElementById("modalTitle").textContent = `選擇「${item.char}」的注音`;
 
-    if(!pick) return;
+  let html = "";
+  options.filter(Boolean).forEach(z=>{
+    html += `<button onclick="chooseZhuyin('${z}')">${z}</button>`;
+  });
 
-    item.zhuyin = opts[Number(pick)-1] || pick;
-  }else{
-    const z = prompt(`輸入「${item.char}」注音`,item.zhuyin);
-
-    if(z !== null){
-      item.zhuyin = z.trim();
-    }
+  if(!html){
+    html = `<p>目前沒有備選音，可使用自訂注音。</p>`;
   }
 
-  render();
+  document.getElementById("modalOptions").innerHTML = html;
+  document.getElementById("zhuyinModal").style.display = "flex";
+}
+
+function chooseZhuyin(z){
+  if(editingIndex !== null && cellData[editingIndex]){
+    cellData[editingIndex].zhuyin = z;
+    render();
+  }
+  closeZhuyinModal();
+}
+
+function customZhuyin(){
+  if(editingIndex === null) return;
+
+  const now = cellData[editingIndex]?.zhuyin || "";
+  const z = prompt("請輸入自訂注音：", now);
+
+  if(z !== null){
+    chooseZhuyin(z.trim());
+  }
+}
+
+function closeZhuyinModal(){
+  document.getElementById("zhuyinModal").style.display = "none";
+  editingIndex = null;
 }
 
 function saveWork(showAlert=true){
@@ -305,9 +296,7 @@ function loadWork(){
   try{
     const data = JSON.parse(raw);
 
-    document.getElementById("words").value =
-      data.words || "黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細";
-
+    document.getElementById("words").value = data.words || "黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細";
     document.getElementById("defaultMode").value = data.mode || "both";
     document.getElementById("fontColor").value = data.fontColor || "#111827";
     document.getElementById("opacity").value = data.opacity || "0.25";
@@ -327,14 +316,10 @@ function loadWork(){
 function clearWork(){
   if(confirm("確定清除本機記憶？")){
     localStorage.removeItem(STORAGE_KEY);
-
-    document.getElementById("words").value =
-      "黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細";
-
+    document.getElementById("words").value = "黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細";
     document.getElementById("defaultMode").value = "both";
     document.getElementById("fontColor").value = "#111827";
     document.getElementById("opacity").value = "0.25";
-
     generateBook();
   }
 }
