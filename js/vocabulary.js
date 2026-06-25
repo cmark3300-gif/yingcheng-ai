@@ -1,4 +1,4 @@
-const STORAGE_KEY = "yc_vocab_v98";
+const STORAGE_KEY = "yc_vocab_v10a";
 
 let cellData = [];
 let zhuyinMap = {};
@@ -35,9 +35,14 @@ document.getElementById("app").innerHTML = `
   <button class="secondary" onclick="window.print()">列印／PDF</button>
 
   <p>
-    點格切換：全 → 音 → 字 → 描 → 空。<br>
-    雙擊格子可選破音字。
+    V10-A：產生後會出現「生字管理表」，可一次管理每個字的顯示方式。<br>
+    點格切換：全 → 音 → 字 → 描 → 空。雙擊格子可選破音字。
   </p>
+</div>
+
+<div class="panel">
+  <h2>生字管理表</h2>
+  <div id="charManager">請先產生生字簿。</div>
 </div>
 
 <div class="paper-wrap">
@@ -65,7 +70,6 @@ async function loadZhuyinData(){
         polyphoneMap[ch] = zhuyinMap[ch];
       }
     });
-
   }catch(e){
     alert("注音資料庫讀取失敗，請檢查 data/zhuyin.json");
     console.error(e);
@@ -127,6 +131,12 @@ function generateBlank(){
 }
 
 function render(){
+  renderBook();
+  renderManager();
+  saveWork(false);
+}
+
+function renderBook(){
   let html = "";
   const pageCount = Math.max(1,Math.ceil(cellData.length / 100));
 
@@ -148,7 +158,6 @@ function render(){
   }
 
   document.getElementById("preview").innerHTML = html;
-  saveWork(false);
 }
 
 function cell(item,index,row,col){
@@ -236,6 +245,68 @@ function renderZhuyin(base,tone){
   return html;
 }
 
+function renderManager(){
+  const box = document.getElementById("charManager");
+
+  if(!cellData.length){
+    box.innerHTML = "請先產生生字簿。";
+    return;
+  }
+
+  let html = `
+    <div style="overflow:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:15px;">
+        <thead>
+          <tr style="background:#f1f5f9;">
+            <th style="border:1px solid #ddd;padding:6px;">序</th>
+            <th style="border:1px solid #ddd;padding:6px;">字</th>
+            <th style="border:1px solid #ddd;padding:6px;">注音</th>
+            <th style="border:1px solid #ddd;padding:6px;">顯示方式</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+
+  cellData.forEach((item,index)=>{
+    if(!item.char) return;
+
+    html += `
+      <tr>
+        <td style="border:1px solid #ddd;padding:6px;text-align:center;">${index+1}</td>
+        <td style="border:1px solid #ddd;padding:6px;text-align:center;font-size:22px;">${item.char}</td>
+        <td style="border:1px solid #ddd;padding:6px;text-align:center;">
+          <button onclick="openZhuyinModal(${index})" style="padding:6px 10px;margin:0;">
+            ${item.zhuyin || "設定"}
+          </button>
+        </td>
+        <td style="border:1px solid #ddd;padding:6px;">
+          <select onchange="setMode(${index},this.value)" style="width:100%;">
+            <option value="both" ${item.mode==="both" ? "selected" : ""}>國字＋注音</option>
+            <option value="zhuyinOnly" ${item.mode==="zhuyinOnly" ? "selected" : ""}>只顯示注音</option>
+            <option value="charOnly" ${item.mode==="charOnly" ? "selected" : ""}>只顯示國字</option>
+            <option value="trace" ${item.mode==="trace" ? "selected" : ""}>描字／描紅</option>
+            <option value="blank" ${item.mode==="blank" ? "selected" : ""}>空白</option>
+          </select>
+        </td>
+      </tr>
+    `;
+  });
+
+  html += `
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  box.innerHTML = html;
+}
+
+function setMode(index,mode){
+  if(!cellData[index]) return;
+  cellData[index].mode = mode;
+  render();
+}
+
 function toggle(index){
   if(!cellData[index]) return;
 
@@ -296,4 +367,67 @@ function closeZhuyinModal(){
 
 function saveWork(showAlert=true){
   localStorage.setItem(STORAGE_KEY,JSON.stringify({
-    words:document.getElementById
+    words:document.getElementById("words").value,
+    mode:document.getElementById("defaultMode").value,
+    fontColor:document.getElementById("fontColor").value,
+    opacity:document.getElementById("opacity").value,
+    cellData:cellData
+  }));
+
+  if(showAlert){
+    alert("已儲存在本機");
+  }
+}
+
+function loadWork(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+
+  if(!raw){
+    generateBook();
+    return;
+  }
+
+  try{
+    const data = JSON.parse(raw);
+
+    document.getElementById("words").value =
+      data.words || "黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細";
+
+    document.getElementById("defaultMode").value = data.mode || "both";
+    document.getElementById("fontColor").value = data.fontColor || "#111827";
+    document.getElementById("opacity").value = data.opacity || "0.25";
+
+    cellData = Array.isArray(data.cellData) ? data.cellData : [];
+
+    if(cellData.length === 0){
+      generateBook();
+    }else{
+      render();
+    }
+  }catch(e){
+    generateBook();
+  }
+}
+
+function clearWork(){
+  if(confirm("確定清除本機記憶？")){
+    localStorage.removeItem(STORAGE_KEY);
+
+    document.getElementById("words").value =
+      "黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細";
+
+    document.getElementById("defaultMode").value = "both";
+    document.getElementById("fontColor").value = "#111827";
+    document.getElementById("opacity").value = "0.25";
+
+    generateBook();
+  }
+}
+
+document.addEventListener("input",function(e){
+  if(e.target.id === "fontColor" || e.target.id === "opacity"){
+    render();
+  }
+});
+
+loadZhuyinData();
