@@ -1,21 +1,9 @@
-const STORAGE_KEY = "yc_vocab_v97";
+const STORAGE_KEY = "yc_vocab_v98";
 
 let cellData = [];
-
-const zhuyinMap = {
-  "黃":"ㄏㄨㄤˊ","狗":"ㄍㄡˇ","公":"ㄍㄨㄥ","雞":"ㄐㄧ","經":"ㄐㄧㄥ","過":"ㄍㄨㄛˋ",
-  "奇":"ㄑㄧˊ","怪":"ㄍㄨㄞˋ","山":"ㄕㄢ","羊":"ㄧㄤˊ","鴨":"ㄧㄚ","子":"ㄗˇ",
-  "信":"ㄒㄧㄣˋ","用":"ㄩㄥˋ","錯":"ㄘㄨㄛˋ","誤":"ㄨˋ","眼":"ㄧㄢˇ","睛":"ㄐㄧㄥ",
-  "仔":"ㄗˇ","細":"ㄒㄧˋ","不":"ㄅㄨˋ","可":"ㄎㄜˇ","以":"ㄧˇ",
-  "重":"ㄓㄨㄥˋ","行":"ㄒㄧㄥˊ","樂":"ㄩㄝˋ","長":"ㄔㄤˊ"
-};
-
-const polyphoneMap = {
-  "重":["ㄓㄨㄥˋ","ㄔㄨㄥˊ"],
-  "行":["ㄒㄧㄥˊ","ㄏㄤˊ"],
-  "樂":["ㄌㄜˋ","ㄩㄝˋ"],
-  "長":["ㄔㄤˊ","ㄓㄤˇ"]
-};
+let zhuyinMap = {};
+let polyphoneMap = {};
+let editingIndex = null;
 
 document.getElementById("app").innerHTML = `
 <div class="panel">
@@ -66,14 +54,38 @@ document.getElementById("app").innerHTML = `
 </div>
 `;
 
-let editingIndex = null;
+async function loadZhuyinData(){
+  try{
+    const res = await fetch("data/zhuyin.json");
+    zhuyinMap = await res.json();
+
+    polyphoneMap = {};
+    Object.keys(zhuyinMap).forEach(ch=>{
+      if(Array.isArray(zhuyinMap[ch])){
+        polyphoneMap[ch] = zhuyinMap[ch];
+      }
+    });
+
+  }catch(e){
+    alert("注音資料庫讀取失敗，請檢查 data/zhuyin.json");
+    console.error(e);
+  }
+
+  loadWork();
+}
 
 function cleanText(text){
   return text.replace(/[，,、。！？；：「」『』（）()《》〈〉\n\r\t\s]/g,"");
 }
 
 function getZhuyin(ch){
-  return zhuyinMap[ch] || "";
+  const value = zhuyinMap[ch];
+
+  if(Array.isArray(value)){
+    return value[0] || "";
+  }
+
+  return value || "";
 }
 
 function splitZhuyin(z){
@@ -110,6 +122,7 @@ function generateBlank(){
     zhuyin:"",
     mode:"blank"
   }));
+
   render();
 }
 
@@ -143,8 +156,15 @@ function cell(item,index,row,col){
     item = {char:"",zhuyin:"",mode:"blank"};
   }
 
-  const showChar = item.mode === "both" || item.mode === "charOnly" || item.mode === "trace";
-  const showZ = item.mode === "both" || item.mode === "zhuyinOnly" || item.mode === "trace";
+  const showChar =
+    item.mode === "both" ||
+    item.mode === "charOnly" ||
+    item.mode === "trace";
+
+  const showZ =
+    item.mode === "both" ||
+    item.mode === "zhuyinOnly" ||
+    item.mode === "trace";
 
   const tag =
     item.mode === "both" ? "全" :
@@ -153,7 +173,9 @@ function cell(item,index,row,col){
     item.mode === "trace" ? "描" : "空";
 
   const color = document.getElementById("fontColor")?.value || "#111827";
-  const opacity = item.mode === "trace" ? (document.getElementById("opacity")?.value || "0.25") : "1";
+  const opacity = item.mode === "trace"
+    ? (document.getElementById("opacity")?.value || "0.25")
+    : "1";
 
   const zh = splitZhuyin(showZ ? item.zhuyin : "");
 
@@ -252,6 +274,7 @@ function chooseZhuyin(z){
     cellData[editingIndex].zhuyin = z;
     render();
   }
+
   closeZhuyinModal();
 }
 
@@ -273,61 +296,4 @@ function closeZhuyinModal(){
 
 function saveWork(showAlert=true){
   localStorage.setItem(STORAGE_KEY,JSON.stringify({
-    words:document.getElementById("words").value,
-    mode:document.getElementById("defaultMode").value,
-    fontColor:document.getElementById("fontColor").value,
-    opacity:document.getElementById("opacity").value,
-    cellData:cellData
-  }));
-
-  if(showAlert){
-    alert("已儲存在本機");
-  }
-}
-
-function loadWork(){
-  const raw = localStorage.getItem(STORAGE_KEY);
-
-  if(!raw){
-    generateBook();
-    return;
-  }
-
-  try{
-    const data = JSON.parse(raw);
-
-    document.getElementById("words").value = data.words || "黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細";
-    document.getElementById("defaultMode").value = data.mode || "both";
-    document.getElementById("fontColor").value = data.fontColor || "#111827";
-    document.getElementById("opacity").value = data.opacity || "0.25";
-
-    cellData = Array.isArray(data.cellData) ? data.cellData : [];
-
-    if(cellData.length === 0){
-      generateBook();
-    }else{
-      render();
-    }
-  }catch(e){
-    generateBook();
-  }
-}
-
-function clearWork(){
-  if(confirm("確定清除本機記憶？")){
-    localStorage.removeItem(STORAGE_KEY);
-    document.getElementById("words").value = "黃狗 公雞 經過 奇怪 山羊 鴨子 信用 錯誤 眼睛 仔細";
-    document.getElementById("defaultMode").value = "both";
-    document.getElementById("fontColor").value = "#111827";
-    document.getElementById("opacity").value = "0.25";
-    generateBook();
-  }
-}
-
-document.addEventListener("input",function(e){
-  if(e.target.id === "fontColor" || e.target.id === "opacity"){
-    render();
-  }
-});
-
-loadWork();
+    words:document.getElementById
