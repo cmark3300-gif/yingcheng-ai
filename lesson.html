@@ -1,1 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>教材管理中心｜穎橙 AI 學習平台</title>
 
+<style>
+body{
+  margin:0;
+  font-family:"Microsoft JhengHei",sans-serif;
+  background:#f4f7fb;
+  color:#1f2937;
+}
+
+header{
+  background:linear-gradient(90deg,#2563eb,#f97316);
+  color:white;
+  text-align:center;
+  padding:24px 16px;
+}
+
+main{
+  max-width:1100px;
+  margin:20px auto;
+  padding:0 16px;
+}
+
+.panel{
+  background:white;
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:16px;
+  box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:12px;
+}
+
+label{
+  display:block;
+  font-weight:bold;
+  margin-top:12px;
+}
+
+input,select,textarea,button{
+  width:100%;
+  box-sizing:border-box;
+  padding:10px;
+  margin-top:6px;
+  font-size:16px;
+}
+
+textarea{
+  min-height:90px;
+}
+
+button{
+  border:0;
+  border-radius:8px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.primary{background:#2563eb;}
+.green{background:#0f766e;}
+.orange{background:#f97316;}
+.gray{background:#64748b;}
+.red{background:#dc2626;}
+
+.btnRow{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:10px;
+  margin-top:16px;
+}
+
+.preview{
+  background:#f8fafc;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:16px;
+  line-height:1.7;
+}
+
+.badge{
+  display:inline-block;
+  background:#eff6ff;
+  color:#2563eb;
+  border-radius:999px;
+  padding:4px 10px;
+  margin:3px;
+  font-size:14px;
+}
+
+.small{
+  color:#64748b;
+  font-size:14px;
+}
+
+@media screen and (max-width:768px){
+  main{padding:0 10px;}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>📚 教材管理中心</h1>
+  <p>所有教材只建立一次，生字簿、考卷與學習單都從這裡產生。</p>
+</header>
+
+<main>
+
+<div class="panel">
+  <h2>教材基本資料</h2>
+
+  <div class="grid">
+    <div>
+      <label>學年度</label>
+      <select id="schoolYear">
+        <option value="115" selected>115 學年度</option>
+        <option value="116">116 學年度</option>
+        <option value="117">117 學年度</option>
+      </select>
+    </div>
+
+    <div>
+      <label>年級</label>
+      <select id="grade">
+        <option value="1">一年級</option>
+        <option value="2">二年級</option>
+        <option value="3" selected>三年級</option>
+        <option value="4">四年級</option>
+        <option value="5">五年級</option>
+        <option value="6">六年級</option>
+      </select>
+    </div>
+
+    <div>
+      <label>科目</label>
+      <select id="subject">
+        <option value="國語" selected>國語</option>
+        <option value="數學">數學</option>
+        <option value="英文">英文</option>
+        <option value="自然">自然</option>
+        <option value="社會">社會</option>
+      </select>
+    </div>
+
+    <div>
+      <label>版本</label>
+      <select id="publisher">
+        <option value="康軒" selected>康軒</option>
+        <option value="南一">南一</option>
+        <option value="翰林">翰林</option>
+        <option value="自訂">自訂</option>
+      </select>
+    </div>
+
+    <div>
+      <label>學期</label>
+      <select id="semester">
+        <option value="1" selected>第一學期</option>
+        <option value="2">第二學期</option>
+      </select>
+    </div>
+
+    <div>
+      <label>課次</label>
+      <input id="lessonNo" type="number" value="1" min="1">
+    </div>
+  </div>
+
+  <label>課名</label>
+  <input id="title" type="text" placeholder="例如：秋天的風">
+
+  <label>課文</label>
+  <textarea id="text" placeholder="貼上課文內容"></textarea>
+
+  <label>生字</label>
+  <textarea id="newWords" placeholder="例如：秋 風 葉 香 雞"></textarea>
+
+  <label>語詞</label>
+  <textarea id="phrases" placeholder="例如：秋天、落葉、微風"></textarea>
+
+  <label>學習目標</label>
+  <textarea id="goals" placeholder="例如：會認讀本課生字、能理解課文內容、能運用語詞造句"></textarea>
+
+  <div class="btnRow">
+    <button class="primary" onclick="saveLesson()">儲存教材</button>
+    <button class="green" onclick="loadLesson()">讀取教材</button>
+    <button class="orange" onclick="exportLesson()">匯出 JSON</button>
+    <button class="gray" onclick="copyLessonKey()">複製教材代碼</button>
+    <button class="red" onclick="clearLesson()">清除畫面</button>
+  </div>
+
+  <p class="small">
+    目前先使用本機瀏覽器儲存。不同電腦或手機不會共用資料。
+  </p>
+</div>
+
+<div class="panel">
+  <h2>教材預覽</h2>
+  <div id="preview" class="preview">尚未建立教材。</div>
+</div>
+
+</main>
+
+<script>
+function getLessonKey(){
+  const schoolYear=document.getElementById("schoolYear").value;
+  const grade=document.getElementById("grade").value;
+  const subject=document.getElementById("subject").value;
+  const publisher=document.getElementById("publisher").value;
+  const semester=document.getElementById("semester").value;
+  const lessonNo=document.getElementById("lessonNo").value || "1";
+
+  return `YC_LESSON_${schoolYear}_${subject}_${publisher}_G${grade}_S${semester}_L${lessonNo}`;
+}
+
+function parseList(text){
+  return text
+    .split(/[\s,，、\n\r]+/)
+    .map(x=>x.trim())
+    .filter(Boolean);
+}
+
+function getLessonData(){
+  return {
+    schoolYear:Number(document.getElementById("schoolYear").value),
+    grade:Number(document.getElementById("grade").value),
+    subject:document.getElementById("subject").value,
+    publisher:document.getElementById("publisher").value,
+    semester:Number(document.getElementById("semester").value),
+    lesson:Number(document.getElementById("lessonNo").value || 1),
+    title:document.getElementById("title").value.trim(),
+    text:document.getElementById("text").value.trim(),
+    newWords:parseList(document.getElementById("newWords").value),
+    phrases:parseList(document.getElementById("phrases").value),
+    learningGoals:parseList(document.getElementById("goals").value),
+    updatedAt:new Date().toISOString()
+  };
+}
+
+function setLessonData(data){
+  document.getElementById("schoolYear").value=data.schoolYear || 115;
+  document.getElementById("grade").value=data.grade || 3;
+  document.getElementById("subject").value=data.subject || "國語";
+  document.getElementById("publisher").value=data.publisher || "康軒";
+  document.getElementById("semester").value=data.semester || 1;
+  document.getElementById("lessonNo").value=data.lesson || 1;
+  document.getElementById("title").value=data.title || "";
+  document.getElementById("text").value=data.text || "";
+  document.getElementById("newWords").value=(data.newWords || []).join(" ");
+  document.getElementById("phrases").value=(data.phrases || []).join("、");
+  document.getElementById("goals").value=(data.learningGoals || []).join("、");
+  renderPreview();
+}
+
+function saveLesson(){
+  const key=getLessonKey();
+  const data=getLessonData();
+
+  localStorage.setItem(key,JSON.stringify(data));
+  localStorage.setItem("YC_LAST_LESSON_KEY",key);
+
+  renderPreview();
+  alert("教材已儲存在本機。");
+}
+
+function loadLesson(){
+  const key=getLessonKey();
+  const raw=localStorage.getItem(key);
+
+  if(!raw){
+    alert("找不到這份教材。請確認學年度、年級、版本、學期與課次是否正確。");
+    return;
+  }
+
+  setLessonData(JSON.parse(raw));
+  alert("教材已讀取。");
+}
+
+function clearLesson(){
+  if(!confirm("確定清除畫面？本機已儲存的教材不會刪除。"))return;
+
+  document.getElementById("title").value="";
+  document.getElementById("text").value="";
+  document.getElementById("newWords").value="";
+  document.getElementById("phrases").value="";
+  document.getElementById("goals").value="";
+  renderPreview();
+}
+
+function exportLesson(){
+  const data=getLessonData();
+  const json=JSON.stringify(data,null,2);
+
+  const blob=new Blob([json],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=`lesson_${data.schoolYear}_${data.publisher}_G${data.grade}_S${data.semester}_L${data.lesson}.json`;
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+function copyLessonKey(){
+  const key=getLessonKey();
+
+  navigator.clipboard.writeText(key).then(()=>{
+    alert("教材代碼已複製：\\n"+key);
+  }).catch(()=>{
+    alert("教材代碼：\\n"+key);
+  });
+}
+
+function renderPreview(){
+  const data=getLessonData();
+
+  let html=`
+    <h3>${data.schoolYear}學年度｜${data.publisher}｜${data.subject}｜${data.grade}年級｜第${data.semester}學期｜第${data.lesson}課</h3>
+    <h2>${data.title || "未填課名"}</h2>
+  `;
+
+  html+=`<p><b>課文：</b><br>${data.text ? data.text.replace(/\\n/g,"<br>") : "尚未輸入課文"}</p>`;
+
+  html+=`<p><b>生字：</b><br>`;
+  if(data.newWords.length){
+    data.newWords.forEach(w=>html+=`<span class="badge">${w}</span>`);
+  }else{
+    html+="尚未輸入生字";
+  }
+  html+=`</p>`;
+
+  html+=`<p><b>語詞：</b><br>`;
+  if(data.phrases.length){
+    data.phrases.forEach(w=>html+=`<span class="badge">${w}</span>`);
+  }else{
+    html+="尚未輸入語詞";
+  }
+  html+=`</p>`;
+
+  html+=`<p><b>學習目標：</b><br>`;
+  if(data.learningGoals.length){
+    data.learningGoals.forEach(w=>html+=`<span class="badge">${w}</span>`);
+  }else{
+    html+="尚未輸入學習目標";
+  }
+  html+=`</p>`;
+
+  document.getElementById("preview").innerHTML=html;
+}
+
+document.querySelectorAll("input,select,textarea").forEach(el=>{
+  el.addEventListener("input",renderPreview);
+  el.addEventListener("change",renderPreview);
+});
+
+const lastKey=localStorage.getItem("YC_LAST_LESSON_KEY");
+if(lastKey && localStorage.getItem(lastKey)){
+  setLessonData(JSON.parse(localStorage.getItem(lastKey)));
+}else{
+  renderPreview();
+}
+</script>
+
+</body>
+</html>
