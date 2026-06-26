@@ -1,1 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>教材清單｜穎橙 AI 學習平台</title>
 
+<style>
+body{
+  margin:0;
+  font-family:"Microsoft JhengHei",sans-serif;
+  background:#f4f7fb;
+  color:#1f2937;
+}
+
+header{
+  background:linear-gradient(90deg,#2563eb,#f97316);
+  color:white;
+  text-align:center;
+  padding:24px 16px;
+}
+
+main{
+  max-width:1100px;
+  margin:20px auto;
+  padding:0 16px;
+}
+
+.panel{
+  background:white;
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:16px;
+  box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.topbar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+input,button{
+  box-sizing:border-box;
+  padding:10px;
+  font-size:16px;
+}
+
+input{
+  flex:1;
+  min-width:220px;
+}
+
+button{
+  border:0;
+  border-radius:8px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.primary{background:#2563eb;}
+.green{background:#0f766e;}
+.gray{background:#64748b;}
+.red{background:#dc2626;}
+
+.lesson-card{
+  background:white;
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:12px;
+  border:1px solid #e5e7eb;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+
+.lesson-card h3{
+  margin:0 0 8px;
+}
+
+.meta{
+  color:#64748b;
+  font-size:14px;
+  line-height:1.7;
+}
+
+.badge{
+  display:inline-block;
+  background:#eff6ff;
+  color:#2563eb;
+  border-radius:999px;
+  padding:4px 10px;
+  margin:3px;
+  font-size:13px;
+}
+
+.actions{
+  margin-top:12px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.actions button{
+  min-width:90px;
+}
+
+.empty{
+  text-align:center;
+  color:#64748b;
+  padding:30px;
+}
+
+footer{
+  text-align:center;
+  color:#64748b;
+  margin:30px 0;
+}
+
+@media screen and (max-width:768px){
+  .topbar{
+    display:block;
+  }
+
+  input,button{
+    width:100%;
+    margin-top:8px;
+  }
+
+  .actions button{
+    width:100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>📚 教材清單</h1>
+  <p>管理已建立的教材，快速開啟、搜尋與刪除。</p>
+</header>
+
+<main>
+
+<div class="panel">
+  <div class="topbar">
+    <input id="searchInput" type="text" placeholder="搜尋：學年度、年級、課名、版本、科目">
+    <button class="primary" onclick="renderLessons()">搜尋</button>
+    <button class="green" onclick="location.href='lesson.html'">＋新增教材</button>
+    <button class="gray" onclick="location.href='platform.html'">回平台首頁</button>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>我的教材</h2>
+  <div id="lessonList" class="empty">讀取中...</div>
+</div>
+
+</main>
+
+<footer>
+  YC-AI｜教材只建立一次，學習可以有無限種可能。
+</footer>
+
+<script>
+function getAllLessons(){
+  const lessons=[];
+
+  for(let i=0;i<localStorage.length;i++){
+    const key=localStorage.key(i);
+
+    if(!key || !key.startsWith("YC_LESSON_")) continue;
+
+    try{
+      const data=JSON.parse(localStorage.getItem(key));
+      lessons.push({key,data});
+    }catch(e){
+      console.warn("教材讀取失敗",key,e);
+    }
+  }
+
+  lessons.sort((a,b)=>{
+    const da=a.data.updatedAt || "";
+    const db=b.data.updatedAt || "";
+    return db.localeCompare(da);
+  });
+
+  return lessons;
+}
+
+function gradeText(grade){
+  const map={
+    1:"一年級",
+    2:"二年級",
+    3:"三年級",
+    4:"四年級",
+    5:"五年級",
+    6:"六年級"
+  };
+  return map[grade] || grade+"年級";
+}
+
+function semesterText(semester){
+  return Number(semester)===1 ? "第一學期" : "第二學期";
+}
+
+function formatDate(iso){
+  if(!iso) return "未紀錄";
+  try{
+    const d=new Date(iso);
+    return d.toLocaleString("zh-TW");
+  }catch(e){
+    return iso;
+  }
+}
+
+function lessonTitle(data){
+  return `${data.schoolYear || ""}學年度｜${gradeText(data.grade)}｜${data.subject || ""}｜${data.publisher || ""}｜${semesterText(data.semester)}｜第${data.lesson || ""}課`;
+}
+
+function lessonSearchText(item){
+  const d=item.data;
+  return [
+    item.key,
+    d.schoolYear,
+    d.grade,
+    d.subject,
+    d.publisher,
+    d.semester,
+    d.lesson,
+    d.title,
+    (d.newWords || []).join(""),
+    (d.phrases || []).join("")
+  ].join(" ").toLowerCase();
+}
+
+function renderLessons(){
+  const box=document.getElementById("lessonList");
+  const keyword=document.getElementById("searchInput").value.trim().toLowerCase();
+
+  let lessons=getAllLessons();
+
+  if(keyword){
+    lessons=lessons.filter(item=>lessonSearchText(item).includes(keyword));
+  }
+
+  if(!lessons.length){
+    box.className="empty";
+    box.innerHTML="目前沒有教材。請先新增教材。";
+    return;
+  }
+
+  box.className="";
+
+  let html="";
+
+  lessons.forEach(item=>{
+    const d=item.data;
+
+    html+=`
+      <div class="lesson-card">
+        <h3>${d.title || "未命名教材"}</h3>
+
+        <div class="meta">
+          ${lessonTitle(d)}<br>
+          最後修改：${formatDate(d.updatedAt)}<br>
+          教材代碼：${item.key}
+        </div>
+
+        <div style="margin-top:8px;">
+          ${(d.newWords || []).slice(0,12).map(w=>`<span class="badge">${w}</span>`).join("")}
+        </div>
+
+        <div class="actions">
+          <button class="primary" onclick="openLesson('${item.key}')">開啟</button>
+          <button class="green" onclick="exportLesson('${item.key}')">匯出</button>
+          <button class="red" onclick="deleteLesson('${item.key}')">刪除</button>
+        </div>
+      </div>
+    `;
+  });
+
+  box.innerHTML=html;
+}
+
+function openLesson(key){
+  localStorage.setItem("YC_LAST_LESSON_KEY",key);
+  location.href="lesson.html";
+}
+
+function deleteLesson(key){
+  if(!confirm("確定要刪除這份教材？\\n刪除後無法復原。")) return;
+
+  localStorage.removeItem(key);
+
+  if(localStorage.getItem("YC_LAST_LESSON_KEY")===key){
+    localStorage.removeItem("YC_LAST_LESSON_KEY");
+  }
+
+  renderLessons();
+}
+
+function exportLesson(key){
+  const raw=localStorage.getItem(key);
+
+  if(!raw){
+    alert("找不到教材資料。");
+    return;
+  }
+
+  const data=JSON.parse(raw);
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=`lesson_${data.schoolYear}_${data.publisher}_G${data.grade}_S${data.semester}_L${data.lesson}.json`;
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById("searchInput").addEventListener("input",renderLessons);
+
+renderLessons();
+</script>
+
+</body>
+</html>
