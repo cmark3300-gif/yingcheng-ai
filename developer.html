@@ -1,1 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Developer Center｜YC-AI</title>
 
+<style>
+body{
+  margin:0;
+  font-family:"Microsoft JhengHei",sans-serif;
+  background:#f4f7fb;
+  color:#1f2937;
+}
+
+header{
+  background:linear-gradient(90deg,#2563eb,#f97316);
+  color:white;
+  text-align:center;
+  padding:26px 16px;
+}
+
+main{
+  max-width:1100px;
+  margin:20px auto;
+  padding:0 16px;
+}
+
+.panel{
+  background:white;
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:16px;
+  box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+button{
+  border:0;
+  border-radius:8px;
+  padding:10px 14px;
+  background:#2563eb;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  font-size:15px;
+  margin:4px;
+}
+
+button.gray{background:#64748b;}
+button.green{background:#16a34a;}
+
+.summary{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:12px;
+}
+
+.card{
+  background:#f8fafc;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:16px;
+  text-align:center;
+}
+
+.card strong{
+  display:block;
+  font-size:30px;
+  color:#2563eb;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:12px;
+  font-size:15px;
+}
+
+th,td{
+  border:1px solid #e5e7eb;
+  padding:8px;
+  text-align:center;
+}
+
+th{
+  background:#f1f5f9;
+}
+
+.ok{
+  color:#16a34a;
+  font-weight:bold;
+}
+
+.bad{
+  color:#dc2626;
+  font-weight:bold;
+}
+
+.warn{
+  color:#f97316;
+  font-weight:bold;
+}
+
+.small{
+  color:#64748b;
+  font-size:14px;
+}
+
+pre{
+  background:#0f172a;
+  color:#e5e7eb;
+  padding:14px;
+  border-radius:10px;
+  overflow:auto;
+}
+
+footer{
+  text-align:center;
+  color:#64748b;
+  margin:30px 0;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🛠 YC-AI Developer Center</h1>
+  <p>檢查教材、知識庫與題型資料是否正常。</p>
+</header>
+
+<main>
+
+<div class="panel">
+  <h2>知識庫檢查</h2>
+  <p class="small">
+    目前檢查檔案：<b>data/knowledge/chinese/characters.json</b>
+  </p>
+
+  <button onclick="loadCharacters()">重新檢查</button>
+  <button class="gray" onclick="location.href='dashboard.html'">回 Dashboard</button>
+  <button class="green" onclick="location.href='lesson-library.html'">教材清單</button>
+</div>
+
+<div class="panel">
+  <h2>檢查摘要</h2>
+  <div class="summary">
+    <div class="card">
+      <strong id="totalChars">0</strong>
+      總字數
+    </div>
+    <div class="card">
+      <strong id="completeChars">0</strong>
+      完整資料
+    </div>
+    <div class="card">
+      <strong id="missingChars">0</strong>
+      缺資料
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>字典資料列表</h2>
+  <div id="result">尚未讀取資料。</div>
+</div>
+
+<div class="panel">
+  <h2>系統訊息</h2>
+  <pre id="log">等待檢查...</pre>
+</div>
+
+</main>
+
+<footer>
+  YC-AI Developer Center｜讓資料先正確，功能才會穩定。
+</footer>
+
+<script>
+const CHARACTER_PATH = "data/knowledge/chinese/characters.json";
+
+function log(message){
+  document.getElementById("log").textContent = message;
+}
+
+function checkArray(value){
+  return Array.isArray(value) && value.length > 0;
+}
+
+function checkString(value){
+  return typeof value === "string" && value.trim() !== "";
+}
+
+function checkNumber(value){
+  return typeof value === "number" && value > 0;
+}
+
+function statusIcon(ok){
+  return ok ? '<span class="ok">正常</span>' : '<span class="bad">缺</span>';
+}
+
+function checkCharacter(item){
+  const checks = {
+    char: checkString(item.char),
+    zhuyin: checkArray(item.zhuyin),
+    radical: checkString(item.radical),
+    strokes: checkNumber(item.strokes),
+    structure: checkString(item.structure),
+    phrases: checkArray(item.phrases),
+    sentences: checkArray(item.sentences),
+    mistakes: Array.isArray(item.mistakes),
+    similar: Array.isArray(item.similar),
+    memoryTip: checkString(item.memoryTip),
+    tags: Array.isArray(item.tags)
+  };
+
+  const required = [
+    "char",
+    "zhuyin",
+    "radical",
+    "strokes",
+    "structure",
+    "phrases",
+    "sentences",
+    "mistakes",
+    "similar",
+    "memoryTip",
+    "tags"
+  ];
+
+  const complete = required.every(k => checks[k]);
+
+  return {checks,complete};
+}
+
+async function loadCharacters(){
+  try{
+    log("正在讀取 characters.json ...");
+
+    const response = await fetch(CHARACTER_PATH + "?t=" + Date.now());
+
+    if(!response.ok){
+      throw new Error("HTTP " + response.status);
+    }
+
+    const data = await response.json();
+
+    renderCharacters(data);
+
+    log("讀取成功：" + CHARACTER_PATH);
+  }catch(error){
+    document.getElementById("result").innerHTML =
+      '<p class="bad">讀取失敗，請確認 characters.json 路徑與 JSON 格式是否正確。</p>';
+
+    document.getElementById("totalChars").textContent = "0";
+    document.getElementById("completeChars").textContent = "0";
+    document.getElementById("missingChars").textContent = "0";
+
+    log("錯誤：" + error.message);
+  }
+}
+
+function renderCharacters(data){
+  const keys = Object.keys(data || {});
+  let completeCount = 0;
+
+  let html = `
+    <table>
+      <thead>
+        <tr>
+          <th>字</th>
+          <th>注音</th>
+          <th>部首</th>
+          <th>筆畫</th>
+          <th>結構</th>
+          <th>語詞</th>
+          <th>例句</th>
+          <th>易錯字</th>
+          <th>記憶提示</th>
+          <th>狀態</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  keys.forEach(charKey=>{
+    const item = data[charKey];
+    const result = checkCharacter(item);
+
+    if(result.complete){
+      completeCount++;
+    }
+
+    html += `
+      <tr>
+        <td style="font-size:24px;font-weight:bold;">${item.char || charKey}</td>
+        <td>${statusIcon(result.checks.zhuyin)}<br><span class="small">${(item.zhuyin || []).join("、")}</span></td>
+        <td>${statusIcon(result.checks.radical)}<br><span class="small">${item.radical || ""}</span></td>
+        <td>${statusIcon(result.checks.strokes)}<br><span class="small">${item.strokes || ""}</span></td>
+        <td>${statusIcon(result.checks.structure)}<br><span class="small">${item.structure || ""}</span></td>
+        <td>${statusIcon(result.checks.phrases)}<br><span class="small">${(item.phrases || []).slice(0,3).join("、")}</span></td>
+        <td>${statusIcon(result.checks.sentences)}</td>
+        <td>${Array.isArray(item.mistakes) && item.mistakes.length ? '<span class="warn">有</span>' : '<span class="ok">無</span>'}<br><span class="small">${(item.mistakes || []).join("、")}</span></td>
+        <td>${statusIcon(result.checks.memoryTip)}</td>
+        <td>${result.complete ? '<span class="ok">完整</span>' : '<span class="bad">需補</span>'}</td>
+      </tr>
+    `;
+  });
+
+  html += `
+      </tbody>
+    </table>
+  `;
+
+  if(keys.length === 0){
+    html = '<p class="warn">characters.json 目前沒有資料。</p>';
+  }
+
+  document.getElementById("result").innerHTML = html;
+  document.getElementById("totalChars").textContent = keys.length;
+  document.getElementById("completeChars").textContent = completeCount;
+  document.getElementById("missingChars").textContent = keys.length - completeCount;
+}
+
+loadCharacters();
+</script>
+
+</body>
+</html>
