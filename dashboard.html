@@ -1,11 +1,283 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-Hant">
 <head>
-    <title>Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YC-AI 穎橙 AI 智慧學習平台</title>
+
+<style>
+body{
+  margin:0;
+  font-family:"Microsoft JhengHei",sans-serif;
+  background:#f4f7fb;
+  color:#1f2937;
+}
+
+header{
+  background:linear-gradient(90deg,#2563eb,#f97316);
+  color:white;
+  text-align:center;
+  padding:30px 16px;
+}
+
+header h1{
+  margin:0;
+  font-size:30px;
+}
+
+header p{
+  margin:10px 0 0;
+  font-size:16px;
+}
+
+main{
+  max-width:1100px;
+  margin:22px auto;
+  padding:0 16px;
+}
+
+.hero{
+  background:white;
+  border-radius:18px;
+  padding:24px;
+  margin-bottom:18px;
+  box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.hero h2{
+  margin-top:0;
+}
+
+.quick{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:16px;
+}
+
+.card{
+  background:white;
+  border-radius:18px;
+  padding:22px;
+  box-shadow:0 3px 12px rgba(0,0,0,.08);
+  border:2px solid transparent;
+  cursor:pointer;
+}
+
+.card:hover{
+  border-color:#2563eb;
+}
+
+.card h2{
+  margin:0 0 8px;
+  font-size:22px;
+}
+
+.card p{
+  color:#64748b;
+  line-height:1.6;
+  margin:0;
+}
+
+.badge{
+  display:inline-block;
+  margin-top:14px;
+  padding:5px 12px;
+  border-radius:999px;
+  background:#eff6ff;
+  color:#2563eb;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.section-title{
+  margin:26px 0 12px;
+}
+
+.lesson-list{
+  background:white;
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.lesson-item{
+  border-bottom:1px solid #e5e7eb;
+  padding:12px 0;
+}
+
+.lesson-item:last-child{
+  border-bottom:none;
+}
+
+.lesson-item b{
+  font-size:17px;
+}
+
+.lesson-item span{
+  display:block;
+  color:#64748b;
+  font-size:14px;
+  margin-top:4px;
+}
+
+.empty{
+  color:#64748b;
+  text-align:center;
+  padding:20px;
+}
+
+footer{
+  text-align:center;
+  color:#64748b;
+  margin:30px 0;
+}
+
+@media screen and (max-width:768px){
+  header h1{
+    font-size:25px;
+  }
+}
+</style>
 </head>
+
 <body>
 
-YC-AI Dashboard
+<header>
+  <h1>YC-AI 穎橙 AI 智慧學習平台</h1>
+  <p>不是把 AI 做得最厲害，而是把學習變得最簡單。</p>
+</header>
+
+<main>
+
+<section class="hero">
+  <h2>今天要做什麼？</h2>
+  <p>先選擇或建立教材，再從同一份教材產生生字簿、考卷、學習單與 AI 練習。</p>
+</section>
+
+<section class="quick">
+
+  <div class="card" onclick="location.href='lesson-library.html'">
+    <h2>📚 我的教材</h2>
+    <p>查看、搜尋、開啟已建立的教材。</p>
+    <span class="badge">推薦先從這裡開始</span>
+  </div>
+
+  <div class="card" onclick="location.href='lesson.html'">
+    <h2>＋ 新增教材</h2>
+    <p>建立學年度、年級、版本、課次、課文、生字與語詞。</p>
+    <span class="badge">M1 教材管理</span>
+  </div>
+
+  <div class="card" onclick="location.href='vocabulary.html'">
+    <h2>📝 生字簿</h2>
+    <p>產生生字簿、描紅、注音與生字管理。</p>
+    <span class="badge">已可使用</span>
+  </div>
+
+  <div class="card">
+    <h2>📄 國語考卷</h2>
+    <p>未來可產生寫生字、寫注音、改錯字與閱讀測驗。</p>
+    <span class="badge">規劃中</span>
+  </div>
+
+  <div class="card">
+    <h2>🤖 AI 教材分析</h2>
+    <p>未來可自動分析課文、生字、語詞、易錯字與題型。</p>
+    <span class="badge">下一階段</span>
+  </div>
+
+  <div class="card">
+    <h2>📊 學習中心</h2>
+    <p>未來記錄孩子練習狀況，找出弱點並安排複習。</p>
+    <span class="badge">未來功能</span>
+  </div>
+
+</section>
+
+<h2 class="section-title">最近教材</h2>
+
+<section class="lesson-list" id="recentLessons">
+  <div class="empty">讀取中...</div>
+</section>
+
+</main>
+
+<footer>
+  獻給每一位願意陪伴孩子學習的大人。
+</footer>
+
+<script>
+function getAllLessons(){
+  const lessons=[];
+
+  for(let i=0;i<localStorage.length;i++){
+    const key=localStorage.key(i);
+
+    if(!key || !key.startsWith("YC_LESSON_")) continue;
+
+    try{
+      const data=JSON.parse(localStorage.getItem(key));
+      lessons.push({key,data});
+    }catch(e){}
+  }
+
+  lessons.sort((a,b)=>{
+    const da=a.data.updatedAt || "";
+    const db=b.data.updatedAt || "";
+    return db.localeCompare(da);
+  });
+
+  return lessons;
+}
+
+function gradeText(g){
+  const map={
+    1:"一年級",
+    2:"二年級",
+    3:"三年級",
+    4:"四年級",
+    5:"五年級",
+    6:"六年級"
+  };
+  return map[g] || g+"年級";
+}
+
+function semesterText(s){
+  return Number(s)===1 ? "第一學期" : "第二學期";
+}
+
+function renderRecentLessons(){
+  const box=document.getElementById("recentLessons");
+  const lessons=getAllLessons().slice(0,5);
+
+  if(!lessons.length){
+    box.innerHTML='<div class="empty">目前還沒有教材。請先按「新增教材」。</div>';
+    return;
+  }
+
+  let html="";
+
+  lessons.forEach(item=>{
+    const d=item.data;
+
+    html+=`
+      <div class="lesson-item" onclick="openLesson('${item.key}')">
+        <b>${d.title || "未命名教材"}</b>
+        <span>${d.schoolYear}學年度｜${gradeText(d.grade)}｜${d.subject}｜${d.publisher}｜${semesterText(d.semester)}｜第${d.lesson}課</span>
+      </div>
+    `;
+  });
+
+  box.innerHTML=html;
+}
+
+function openLesson(key){
+  localStorage.setItem("YC_LAST_LESSON_KEY",key);
+  location.href="lesson.html";
+}
+
+renderRecentLessons();
+</script>
 
 </body>
 </html>
