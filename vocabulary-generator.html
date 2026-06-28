@@ -1,1 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生字簿產生器｜YC-AI</title>
+<style>
+body{margin:0;font-family:"Microsoft JhengHei",sans-serif;background:#f4f7fb;color:#1f2937;}
+header{background:linear-gradient(90deg,#2563eb,#f97316);color:white;text-align:center;padding:24px;}
+main{max-width:1200px;margin:20px auto;padding:0 16px;}
+.wrap{display:grid;grid-template-columns:320px 1fr;gap:16px;}
+.panel{background:white;border-radius:16px;padding:18px;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+label{display:block;margin:12px 0;font-weight:bold;}
+input[type="checkbox"]{width:auto;margin-right:8px;}
+button{border:0;border-radius:9px;padding:11px 14px;margin:5px;background:#2563eb;color:white;font-weight:bold;cursor:pointer;}
+button.gray{background:#64748b;}
+.preview{background:white;min-height:700px;padding:24px;border-radius:16px;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.word-block{border-bottom:1px solid #e5e7eb;padding:18px 0;}
+.big-char{font-size:48px;font-family:"標楷體","DFKai-SB",serif;}
+.trace{font-size:42px;color:#9ca3af;letter-spacing:18px;font-family:"標楷體","DFKai-SB",serif;}
+.zhuyin{font-size:24px;color:#2563eb;margin-top:8px;}
+.phrase{margin-top:8px;font-size:20px;}
+.small{color:#64748b;font-size:14px;}
+@media(max-width:768px){.wrap{grid-template-columns:1fr;}}
+@media print{
+  header,.panel{display:none;}
+  body{background:white;}
+  main{max-width:none;margin:0;padding:0;}
+  .preview{box-shadow:none;border-radius:0;}
+}
+</style>
+</head>
 
+<body>
+
+<header>
+  <h1>📖 生字簿產生器 V1</h1>
+  <p>從目前教材產生可列印的生字練習。</p>
+</header>
+
+<main>
+<div class="wrap">
+
+<section class="panel">
+  <h2>設定</h2>
+  <p id="lessonInfo" class="small">讀取教材中...</p>
+
+  <label><input type="checkbox" id="showTrace" checked onchange="render()">描紅</label>
+  <label><input type="checkbox" id="showZhuyin" checked onchange="render()">注音</label>
+  <label><input type="checkbox" id="showPhrase" checked onchange="render()">詞語</label>
+
+  <button onclick="render()">重新產生</button>
+  <button onclick="window.print()">列印</button>
+  <button class="gray" onclick="location.href='lesson-workspace.html'">回教材工作台</button>
+</section>
+
+<section class="preview" id="preview">
+  尚未載入教材。
+</section>
+
+</div>
+</main>
+
+<script>
+let currentLesson=null;
+let characterData={};
+
+function getCurrentLesson(){
+  const key=localStorage.getItem("YC_LAST_LESSON_KEY");
+  if(!key)return null;
+  const raw=localStorage.getItem(key);
+  if(!raw)return null;
+  return JSON.parse(raw);
+}
+
+async function loadCharacters(){
+  try{
+    const res=await fetch("data/knowledge/chinese/characters.json?t="+Date.now());
+    characterData=await res.json();
+  }catch(e){
+    characterData={};
+  }
+}
+
+function render(){
+  const preview=document.getElementById("preview");
+
+  if(!currentLesson){
+    preview.innerHTML="<p>尚未選擇教材，請先到教材清單開啟一份教材。</p>";
+    return;
+  }
+
+  const words=currentLesson.newWords||[];
+  const showTrace=document.getElementById("showTrace").checked;
+  const showZhuyin=document.getElementById("showZhuyin").checked;
+  const showPhrase=document.getElementById("showPhrase").checked;
+
+  let html=`<h2>${currentLesson.title||"未命名教材"} 生字簿</h2>`;
+  html+=`<p class="small">${currentLesson.schoolYear}學年度｜${currentLesson.grade}年級｜${currentLesson.subject}｜${currentLesson.publisher}｜第${currentLesson.lesson}課</p>`;
+
+  if(!words.length){
+    html+="<p>本課尚未輸入生字。</p>";
+    preview.innerHTML=html;
+    return;
+  }
+
+  words.forEach(ch=>{
+    const info=characterData[ch]||{};
+    html+=`<div class="word-block">`;
+    html+=`<div class="big-char">${ch}</div>`;
+
+    if(showTrace){
+      html+=`<div class="trace">${ch} ${ch} ${ch}</div>`;
+    }
+
+    if(showZhuyin){
+      html+=`<div class="zhuyin">${(info.zhuyin||[""]).join("、")}</div>`;
+    }
+
+    if(showPhrase){
+      const phrases=info.phrases||[];
+      html+=`<div class="phrase">詞語：${phrases.length?phrases.join("、"):"__________"}</div>`;
+    }
+
+    html+=`</div>`;
+  });
+
+  preview.innerHTML=html;
+}
+
+async function init(){
+  currentLesson=getCurrentLesson();
+
+  if(currentLesson){
+    document.getElementById("lessonInfo").textContent=
+      `${currentLesson.title||"未命名教材"}｜共 ${(currentLesson.newWords||[]).length} 個生字`;
+  }else{
+    document.getElementById("lessonInfo").textContent="尚未選擇教材";
+  }
+
+  await loadCharacters();
+  render();
+}
+
+init();
+</script>
+
+</body>
+</html>
