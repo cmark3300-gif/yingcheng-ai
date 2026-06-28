@@ -6,137 +6,28 @@
 <title>YC-AI 穎橙 AI 智慧學習平台</title>
 
 <style>
-body{
-  margin:0;
-  font-family:"Microsoft JhengHei",sans-serif;
-  background:#f4f7fb;
-  color:#1f2937;
-}
-
-header{
-  background:linear-gradient(90deg,#2563eb,#f97316);
-  color:white;
-  text-align:center;
-  padding:30px 16px;
-}
-
-header h1{
-  margin:0;
-  font-size:30px;
-}
-
-header p{
-  margin:10px 0 0;
-  font-size:16px;
-}
-
-main{
-  max-width:1100px;
-  margin:22px auto;
-  padding:0 16px;
-}
-
-.hero{
-  background:white;
-  border-radius:18px;
-  padding:24px;
-  margin-bottom:18px;
-  box-shadow:0 3px 12px rgba(0,0,0,.08);
-}
-
-.hero h2{
-  margin-top:0;
-}
-
-.quick{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
-  gap:16px;
-}
-
-.card{
-  background:white;
-  border-radius:18px;
-  padding:22px;
-  box-shadow:0 3px 12px rgba(0,0,0,.08);
-  border:2px solid transparent;
-  cursor:pointer;
-}
-
-.card:hover{
-  border-color:#2563eb;
-}
-
-.card h2{
-  margin:0 0 8px;
-  font-size:22px;
-}
-
-.card p{
-  color:#64748b;
-  line-height:1.6;
-  margin:0;
-}
-
-.badge{
-  display:inline-block;
-  margin-top:14px;
-  padding:5px 12px;
-  border-radius:999px;
-  background:#eff6ff;
-  color:#2563eb;
-  font-size:13px;
-  font-weight:bold;
-}
-
-.section-title{
-  margin:26px 0 12px;
-}
-
-.lesson-list{
-  background:white;
-  border-radius:18px;
-  padding:18px;
-  box-shadow:0 3px 12px rgba(0,0,0,.08);
-}
-
-.lesson-item{
-  border-bottom:1px solid #e5e7eb;
-  padding:12px 0;
-}
-
-.lesson-item:last-child{
-  border-bottom:none;
-}
-
-.lesson-item b{
-  font-size:17px;
-}
-
-.lesson-item span{
-  display:block;
-  color:#64748b;
-  font-size:14px;
-  margin-top:4px;
-}
-
-.empty{
-  color:#64748b;
-  text-align:center;
-  padding:20px;
-}
-
-footer{
-  text-align:center;
-  color:#64748b;
-  margin:30px 0;
-}
-
-@media screen and (max-width:768px){
-  header h1{
-    font-size:25px;
-  }
-}
+body{margin:0;font-family:"Microsoft JhengHei",sans-serif;background:#f4f7fb;color:#1f2937;}
+header{background:linear-gradient(90deg,#2563eb,#f97316);color:white;text-align:center;padding:30px 16px;}
+main{max-width:1100px;margin:22px auto;padding:0 16px;}
+.panel{background:white;border-radius:18px;padding:22px;margin-bottom:18px;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;}
+.card{background:#f8fafc;border:1px solid #e5e7eb;border-radius:16px;padding:18px;cursor:pointer;}
+.card:hover{border-color:#2563eb;}
+.card h3{margin:0 0 8px;font-size:21px;}
+.card p{margin:0;color:#64748b;line-height:1.6;}
+.badge{display:inline-block;margin-top:12px;padding:5px 12px;border-radius:999px;background:#eff6ff;color:#2563eb;font-size:13px;font-weight:bold;}
+button{border:0;border-radius:9px;padding:11px 14px;margin:5px;background:#2563eb;color:white;font-weight:bold;cursor:pointer;font-size:15px;}
+button.green{background:#16a34a;}
+button.orange{background:#f97316;}
+button.gray{background:#64748b;}
+.progress{height:18px;background:#e5e7eb;border-radius:999px;overflow:hidden;}
+.progress div{height:100%;background:#16a34a;width:0%;}
+.small{color:#64748b;font-size:14px;line-height:1.7;}
+.lesson-item{border-bottom:1px solid #e5e7eb;padding:10px 0;cursor:pointer;}
+.lesson-item:last-child{border-bottom:none;}
+.lesson-item b{font-size:16px;}
+.lesson-item span{display:block;color:#64748b;font-size:14px;margin-top:4px;}
+footer{text-align:center;color:#64748b;margin:30px 0;}
 </style>
 </head>
 
@@ -144,60 +35,74 @@ footer{
 
 <header>
   <h1>YC-AI 穎橙 AI 智慧學習平台</h1>
-  <p>不是把 AI 做得最厲害，而是把學習變得最簡單。</p>
+  <p>一份教材，多種練習；把時間留給陪伴。</p>
 </header>
 
 <main>
 
-<section class="hero">
-  <h2>今天要做什麼？</h2>
-  <p>先選擇或建立教材，再從同一份教材產生生字簿、考卷、學習單與 AI 練習。</p>
+<section class="panel">
+  <h2>目前教材</h2>
+  <div id="currentLesson">讀取中...</div>
+  <div style="margin-top:12px;">
+    <button onclick="location.href='lesson-library.html'">📚 選擇教材</button>
+    <button class="green" onclick="location.href='lesson.html'">＋新增教材</button>
+    <button class="orange" onclick="location.href='lesson-workspace.html'">進入教材工作台</button>
+  </div>
 </section>
 
-<section class="quick">
-
-  <div class="card" onclick="location.href='lesson-library.html'">
-    <h2>📚 我的教材</h2>
-    <p>查看、搜尋、開啟已建立的教材。</p>
-    <span class="badge">推薦先從這裡開始</span>
-  </div>
-
-  <div class="card" onclick="location.href='lesson.html'">
-    <h2>＋ 新增教材</h2>
-    <p>建立學年度、年級、版本、課次、課文、生字與語詞。</p>
-    <span class="badge">M1 教材管理</span>
-  </div>
-
-  <div class="card" onclick="location.href='vocabulary.html'">
-    <h2>📝 生字簿</h2>
-    <p>產生生字簿、描紅、注音與生字管理。</p>
-    <span class="badge">已可使用</span>
-  </div>
-
-  <div class="card">
-    <h2>📄 國語考卷</h2>
-    <p>未來可產生寫生字、寫注音、改錯字與閱讀測驗。</p>
-    <span class="badge">規劃中</span>
-  </div>
-
-  <div class="card">
-    <h2>🤖 AI 教材分析</h2>
-    <p>未來可自動分析課文、生字、語詞、易錯字與題型。</p>
-    <span class="badge">下一階段</span>
-  </div>
-
-  <div class="card">
-    <h2>📊 學習中心</h2>
-    <p>未來記錄孩子練習狀況，找出弱點並安排複習。</p>
-    <span class="badge">未來功能</span>
-  </div>
-
+<section class="panel">
+  <h2>下一步建議</h2>
+  <div class="progress"><div id="progressBar"></div></div>
+  <p id="progressText" class="small"></p>
+  <div id="nextActions"></div>
 </section>
 
-<h2 class="section-title">最近教材</h2>
+<section class="panel">
+  <h2>功能入口</h2>
+  <div class="grid">
 
-<section class="lesson-list" id="recentLessons">
-  <div class="empty">讀取中...</div>
+    <div class="card" onclick="location.href='lesson-library.html'">
+      <h3>📚 教材管理</h3>
+      <p>查看、搜尋、開啟已建立的教材。</p>
+      <span class="badge">核心功能</span>
+    </div>
+
+    <div class="card" onclick="location.href='lesson-workspace.html'">
+      <h3>📖 教材工作台</h3>
+      <p>查看本課課文、生字、語詞與可產生的練習。</p>
+      <span class="badge">目前主流程</span>
+    </div>
+
+    <div class="card" onclick="location.href='vocabulary.html'">
+      <h3>📝 生字簿</h3>
+      <p>產生生字簿、描紅、注音與生字管理。</p>
+      <span class="badge">已可使用</span>
+    </div>
+
+    <div class="card" onclick="location.href='knowledge.html'">
+      <h3>🧠 教材知識</h3>
+      <p>未來管理國字、詞語、句子與教學提示。</p>
+      <span class="badge">建置中</span>
+    </div>
+
+    <div class="card" onclick="alert('國語考卷模組尚未建立')">
+      <h3>📄 國語考卷</h3>
+      <p>未來產生寫生字、寫注音、改錯字、造句與閱讀理解。</p>
+      <span class="badge">規劃中</span>
+    </div>
+
+    <div class="card" onclick="location.href='developer.html'">
+      <h3>🛠 開發中心</h3>
+      <p>檢查資料、知識庫與系統狀態。</p>
+      <span class="badge">維護工具</span>
+    </div>
+
+  </div>
+</section>
+
+<section class="panel">
+  <h2>最近教材</h2>
+  <div id="recentLessons">讀取中...</div>
 </section>
 
 </main>
@@ -207,43 +112,88 @@ footer{
 </footer>
 
 <script>
+function gradeText(grade){
+  const map={1:"一年級",2:"二年級",3:"三年級",4:"四年級",5:"五年級",6:"六年級"};
+  return map[grade] || grade+"年級";
+}
+
+function semesterText(semester){
+  return Number(semester)===1 ? "第一學期" : "第二學期";
+}
+
 function getAllLessons(){
   const lessons=[];
-
   for(let i=0;i<localStorage.length;i++){
     const key=localStorage.key(i);
-
     if(!key || !key.startsWith("YC_LESSON_")) continue;
-
     try{
-      const data=JSON.parse(localStorage.getItem(key));
-      lessons.push({key,data});
+      lessons.push({key,data:JSON.parse(localStorage.getItem(key))});
     }catch(e){}
   }
-
-  lessons.sort((a,b)=>{
-    const da=a.data.updatedAt || "";
-    const db=b.data.updatedAt || "";
-    return db.localeCompare(da);
-  });
-
+  lessons.sort((a,b)=>(b.data.updatedAt||"").localeCompare(a.data.updatedAt||""));
   return lessons;
 }
 
-function gradeText(g){
-  const map={
-    1:"一年級",
-    2:"二年級",
-    3:"三年級",
-    4:"四年級",
-    5:"五年級",
-    6:"六年級"
-  };
-  return map[g] || g+"年級";
+function lessonMeta(d){
+  return `${d.schoolYear}學年度｜${gradeText(d.grade)}｜${d.subject}｜${d.publisher}｜${semesterText(d.semester)}｜第${d.lesson}課`;
 }
 
-function semesterText(s){
-  return Number(s)===1 ? "第一學期" : "第二學期";
+function getCurrentLesson(){
+  const key=localStorage.getItem("YC_LAST_LESSON_KEY");
+  if(!key) return null;
+  const raw=localStorage.getItem(key);
+  if(!raw) return null;
+  return {key,data:JSON.parse(raw)};
+}
+
+function renderCurrentLesson(){
+  const box=document.getElementById("currentLesson");
+  const current=getCurrentLesson();
+
+  if(!current){
+    box.innerHTML='<p class="small">尚未選擇教材。請先新增或選擇教材。</p>';
+    renderProgress(null);
+    return;
+  }
+
+  const d=current.data;
+  box.innerHTML=`
+    <h3>${d.title || "未命名教材"}</h3>
+    <p class="small">${lessonMeta(d)}</p>
+  `;
+
+  renderProgress(d);
+}
+
+function renderProgress(d){
+  if(!d){
+    document.getElementById("progressBar").style.width="0%";
+    document.getElementById("progressText").textContent="完成度：0%。請先建立教材。";
+    document.getElementById("nextActions").innerHTML='<button onclick="location.href=\'lesson.html\'">＋新增教材</button>';
+    return;
+  }
+
+  const hasText=!!d.text;
+  const hasWords=Array.isArray(d.newWords)&&d.newWords.length>0;
+  const hasPhrases=Array.isArray(d.phrases)&&d.phrases.length>0;
+  const hasGoals=Array.isArray(d.learningGoals)&&d.learningGoals.length>0;
+
+  const score=[hasText,hasWords,hasPhrases,hasGoals].filter(Boolean).length;
+  const percent=Math.round(score/4*100);
+
+  document.getElementById("progressBar").style.width=percent+"%";
+  document.getElementById("progressText").textContent=`教材完成度：${percent}%`;
+
+  let html="";
+  if(!hasText) html+="<button onclick=\"location.href='lesson.html'\">補課文</button>";
+  if(!hasWords) html+="<button onclick=\"location.href='lesson.html'\">補生字</button>";
+  if(!hasPhrases) html+="<button onclick=\"location.href='lesson.html'\">補語詞</button>";
+  if(percent===100){
+    html+="<button class='orange' onclick=\"location.href='lesson-workspace.html'\">進入教材工作台</button>";
+    html+="<button onclick=\"location.href='vocabulary.html'\">產生生字簿</button>";
+  }
+
+  document.getElementById("nextActions").innerHTML=html;
 }
 
 function renderRecentLessons(){
@@ -251,31 +201,27 @@ function renderRecentLessons(){
   const lessons=getAllLessons().slice(0,5);
 
   if(!lessons.length){
-    box.innerHTML='<div class="empty">目前還沒有教材。請先按「新增教材」。</div>';
+    box.innerHTML='<p class="small">目前沒有教材。</p>';
     return;
   }
 
-  let html="";
-
-  lessons.forEach(item=>{
+  box.innerHTML=lessons.map(item=>{
     const d=item.data;
-
-    html+=`
+    return `
       <div class="lesson-item" onclick="openLesson('${item.key}')">
         <b>${d.title || "未命名教材"}</b>
-        <span>${d.schoolYear}學年度｜${gradeText(d.grade)}｜${d.subject}｜${d.publisher}｜${semesterText(d.semester)}｜第${d.lesson}課</span>
+        <span>${lessonMeta(d)}</span>
       </div>
     `;
-  });
-
-  box.innerHTML=html;
+  }).join("");
 }
 
 function openLesson(key){
   localStorage.setItem("YC_LAST_LESSON_KEY",key);
-  location.href="lesson.html";
+  location.href="lesson-workspace.html";
 }
 
+renderCurrentLesson();
 renderRecentLessons();
 </script>
 
