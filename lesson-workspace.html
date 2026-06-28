@@ -1,1 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>教材工作台｜YC-AI</title>
+<style>
+body{margin:0;font-family:"Microsoft JhengHei",sans-serif;background:#f4f7fb;color:#1f2937;}
+header{background:linear-gradient(90deg,#2563eb,#f97316);color:white;text-align:center;padding:26px 16px;}
+main{max-width:1100px;margin:20px auto;padding:0 16px;}
+.panel{background:white;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+.card{background:#f8fafc;border:1px solid #e5e7eb;border-radius:14px;padding:16px;}
+.card h3{margin:0 0 8px;}
+.badge{display:inline-block;background:#eff6ff;color:#2563eb;border-radius:999px;padding:5px 11px;margin:4px;font-size:14px;}
+button{border:0;border-radius:9px;padding:12px 14px;margin:5px;background:#2563eb;color:white;font-weight:bold;cursor:pointer;font-size:15px;}
+button.green{background:#16a34a;}
+button.orange{background:#f97316;}
+button.gray{background:#64748b;}
+.progress{height:18px;background:#e5e7eb;border-radius:999px;overflow:hidden;}
+.progress div{height:100%;background:#16a34a;width:0%;}
+.small{color:#64748b;font-size:14px;line-height:1.7;}
+pre{white-space:pre-wrap;line-height:1.8;background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:14px;}
+.empty{text-align:center;color:#64748b;padding:24px;}
+footer{text-align:center;color:#64748b;margin:30px 0;}
+</style>
+</head>
 
+<body>
+
+<header>
+  <h1>📚 教材工作台</h1>
+  <p>一課教材，一個工作台；所有練習都從這裡開始。</p>
+</header>
+
+<main>
+
+<div class="panel">
+  <h2 id="lessonTitle">讀取教材中...</h2>
+  <p id="lessonMeta" class="small"></p>
+  <button class="gray" onclick="location.href='dashboard.html'">回首頁</button>
+  <button class="gray" onclick="location.href='lesson-library.html'">教材清單</button>
+  <button onclick="location.href='lesson.html'">編輯教材</button>
+</div>
+
+<div class="panel">
+  <h2>教材完整度</h2>
+  <div class="progress"><div id="progressBar"></div></div>
+  <p id="progressText" class="small"></p>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h3>📖 課文</h3>
+    <p id="textStatus" class="small"></p>
+  </div>
+  <div class="card">
+    <h3>📝 生字</h3>
+    <p id="wordStatus" class="small"></p>
+  </div>
+  <div class="card">
+    <h3>💬 語詞</h3>
+    <p id="phraseStatus" class="small"></p>
+  </div>
+  <div class="card">
+    <h3>🎯 學習目標</h3>
+    <p id="goalStatus" class="small"></p>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>今天要做什麼？</h2>
+  <button onclick="location.href='vocabulary.html'">📝 產生生字簿</button>
+  <button class="green" onclick="alert('國語考卷模組尚未建立')">📄 國語考卷</button>
+  <button class="orange" onclick="alert('AI 教材分析尚未建立')">🤖 AI 教材分析</button>
+  <button class="gray" onclick="location.href='developer.html'">🛠 資料檢查</button>
+</div>
+
+<div class="panel">
+  <h2>課文內容</h2>
+  <pre id="lessonText">尚未載入</pre>
+</div>
+
+<div class="panel">
+  <h2>本課生字</h2>
+  <div id="newWords"></div>
+</div>
+
+<div class="panel">
+  <h2>本課語詞</h2>
+  <div id="phrases"></div>
+</div>
+
+<div class="panel">
+  <h2>學習目標</h2>
+  <div id="goals"></div>
+</div>
+
+</main>
+
+<footer>
+  YC-AI｜先建立教材，再產生所有練習。
+</footer>
+
+<script>
+function gradeText(grade){
+  const map={1:"一年級",2:"二年級",3:"三年級",4:"四年級",5:"五年級",6:"六年級"};
+  return map[grade] || grade+"年級";
+}
+
+function semesterText(semester){
+  return Number(semester)===1 ? "第一學期" : "第二學期";
+}
+
+function badgeList(list){
+  if(!list || !list.length) return '<span class="small">尚未輸入</span>';
+  return list.map(x=>`<span class="badge">${x}</span>`).join("");
+}
+
+function loadCurrentLesson(){
+  const key=localStorage.getItem("YC_LAST_LESSON_KEY");
+
+  if(!key){
+    showEmpty();
+    return;
+  }
+
+  const raw=localStorage.getItem(key);
+
+  if(!raw){
+    showEmpty();
+    return;
+  }
+
+  const data=JSON.parse(raw);
+  renderLesson(data);
+}
+
+function showEmpty(){
+  document.getElementById("lessonTitle").textContent="尚未選擇教材";
+  document.getElementById("lessonMeta").textContent="請先到教材清單開啟一份教材。";
+  document.getElementById("lessonText").textContent="尚未載入";
+  document.getElementById("newWords").innerHTML='<div class="empty">尚未載入生字</div>';
+  document.getElementById("phrases").innerHTML='<div class="empty">尚未載入語詞</div>';
+  document.getElementById("goals").innerHTML='<div class="empty">尚未載入學習目標</div>';
+}
+
+function renderLesson(d){
+  document.getElementById("lessonTitle").textContent=d.title || "未命名教材";
+
+  document.getElementById("lessonMeta").textContent=
+    `${d.schoolYear}學年度｜${gradeText(d.grade)}｜${d.subject}｜${d.publisher}｜${semesterText(d.semester)}｜第${d.lesson}課`;
+
+  const hasText=!!d.text;
+  const hasWords=Array.isArray(d.newWords)&&d.newWords.length>0;
+  const hasPhrases=Array.isArray(d.phrases)&&d.phrases.length>0;
+  const hasGoals=Array.isArray(d.learningGoals)&&d.learningGoals.length>0;
+
+  const score=[hasText,hasWords,hasPhrases,hasGoals].filter(Boolean).length;
+  const percent=Math.round(score/4*100);
+
+  document.getElementById("progressBar").style.width=percent+"%";
+  document.getElementById("progressText").textContent=`完成度：${percent}%（課文、生字、語詞、學習目標）`;
+
+  document.getElementById("textStatus").textContent=hasText ? "已建立課文" : "尚未輸入課文";
+  document.getElementById("wordStatus").textContent=hasWords ? `共 ${d.newWords.length} 個生字` : "尚未輸入生字";
+  document.getElementById("phraseStatus").textContent=hasPhrases ? `共 ${d.phrases.length} 個語詞` : "尚未輸入語詞";
+  document.getElementById("goalStatus").textContent=hasGoals ? `共 ${d.learningGoals.length} 個目標` : "尚未輸入學習目標";
+
+  document.getElementById("lessonText").textContent=d.text || "尚未輸入課文";
+  document.getElementById("newWords").innerHTML=badgeList(d.newWords);
+  document.getElementById("phrases").innerHTML=badgeList(d.phrases);
+  document.getElementById("goals").innerHTML=badgeList(d.learningGoals);
+}
+
+loadCurrentLesson();
+</script>
+
+</body>
+</html>
