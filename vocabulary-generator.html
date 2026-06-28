@@ -9,18 +9,30 @@ body{margin:0;font-family:"Microsoft JhengHei",sans-serif;background:#f4f7fb;col
 header{background:linear-gradient(90deg,#2563eb,#f97316);color:white;text-align:center;padding:24px;}
 main{max-width:1200px;margin:20px auto;padding:0 16px;}
 .wrap{display:grid;grid-template-columns:320px 1fr;gap:16px;}
-.panel{background:white;border-radius:16px;padding:18px;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.panel,.preview{background:white;border-radius:16px;padding:18px;box-shadow:0 3px 12px rgba(0,0,0,.08);}
 label{display:block;margin:12px 0;font-weight:bold;}
 input[type="checkbox"]{width:auto;margin-right:8px;}
 button{border:0;border-radius:9px;padding:11px 14px;margin:5px;background:#2563eb;color:white;font-weight:bold;cursor:pointer;}
 button.gray{background:#64748b;}
-.preview{background:white;min-height:700px;padding:24px;border-radius:16px;box-shadow:0 3px 12px rgba(0,0,0,.08);}
-.word-block{border-bottom:1px solid #e5e7eb;padding:18px 0;}
-.big-char{font-size:48px;font-family:"標楷體","DFKai-SB",serif;}
-.trace{font-size:42px;color:#9ca3af;letter-spacing:18px;font-family:"標楷體","DFKai-SB",serif;}
-.zhuyin{font-size:24px;color:#2563eb;margin-top:8px;}
-.phrase{margin-top:8px;font-size:20px;}
 .small{color:#64748b;font-size:14px;}
+.word-block{border-bottom:1px solid #e5e7eb;padding:18px 0;}
+.word-title{font-size:26px;font-weight:bold;margin-bottom:8px;}
+.practice-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.grid-char{
+  width:64px;height:64px;border:2px solid #2563eb;position:relative;
+  display:flex;align-items:center;justify-content:center;
+  font-size:44px;font-family:"標楷體","DFKai-SB",serif;box-sizing:border-box;background:white;
+}
+.grid-char::before{content:"";position:absolute;left:50%;top:0;height:100%;border-left:1px dashed #93c5fd;}
+.grid-char::after{content:"";position:absolute;top:50%;left:0;width:100%;border-top:1px dashed #93c5fd;}
+.diag1,.diag2{position:absolute;width:142%;border-top:1px dashed #bfdbfe;left:-21%;top:50%;}
+.diag1{transform:rotate(45deg);}
+.diag2{transform:rotate(-45deg);}
+.grid-char span{position:relative;z-index:2;}
+.trace-char span{color:#9ca3af;}
+.blank-char span{color:transparent;}
+.zhuyin{font-size:22px;color:#2563eb;margin-top:8px;}
+.phrase{margin-top:8px;font-size:19px;}
 @media(max-width:768px){.wrap{grid-template-columns:1fr;}}
 @media print{
   header,.panel{display:none;}
@@ -32,20 +44,18 @@ button.gray{background:#64748b;}
 </head>
 
 <body>
-
 <header>
-  <h1>📖 生字簿產生器 V1</h1>
-  <p>從目前教材產生可列印的生字練習。</p>
+  <h1>📖 生字簿產生器 V1.1</h1>
+  <p>田字格描紅＋注音＋詞語練習</p>
 </header>
 
 <main>
 <div class="wrap">
-
 <section class="panel">
   <h2>設定</h2>
   <p id="lessonInfo" class="small">讀取教材中...</p>
 
-  <label><input type="checkbox" id="showTrace" checked onchange="render()">描紅</label>
+  <label><input type="checkbox" id="showTrace" checked onchange="render()">田字格描紅</label>
   <label><input type="checkbox" id="showZhuyin" checked onchange="render()">注音</label>
   <label><input type="checkbox" id="showPhrase" checked onchange="render()">詞語</label>
 
@@ -54,10 +64,7 @@ button.gray{background:#64748b;}
   <button class="gray" onclick="location.href='lesson-workspace.html'">回教材工作台</button>
 </section>
 
-<section class="preview" id="preview">
-  尚未載入教材。
-</section>
-
+<section class="preview" id="preview">尚未載入教材。</section>
 </div>
 </main>
 
@@ -80,6 +87,16 @@ async function loadCharacters(){
   }catch(e){
     characterData={};
   }
+}
+
+function gridCell(ch,type){
+  return `
+    <div class="grid-char ${type}">
+      <div class="diag1"></div>
+      <div class="diag2"></div>
+      <span>${ch}</span>
+    </div>
+  `;
 }
 
 function render(){
@@ -107,14 +124,19 @@ function render(){
   words.forEach(ch=>{
     const info=characterData[ch]||{};
     html+=`<div class="word-block">`;
-    html+=`<div class="big-char">${ch}</div>`;
+    html+=`<div class="word-title">${ch}</div>`;
 
     if(showTrace){
-      html+=`<div class="trace">${ch} ${ch} ${ch}</div>`;
+      html+=`<div class="practice-row">`;
+      html+=gridCell(ch,"trace-char");
+      html+=gridCell(ch,"trace-char");
+      html+=gridCell(ch,"blank-char");
+      html+=gridCell(ch,"blank-char");
+      html+=`</div>`;
     }
 
     if(showZhuyin){
-      html+=`<div class="zhuyin">${(info.zhuyin||[""]).join("、")}</div>`;
+      html+=`<div class="zhuyin">注音：${(info.zhuyin||[""]).join("、") || "________"}</div>`;
     }
 
     if(showPhrase){
@@ -144,6 +166,5 @@ async function init(){
 
 init();
 </script>
-
 </body>
 </html>
