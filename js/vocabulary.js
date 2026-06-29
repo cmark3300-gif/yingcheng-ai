@@ -474,21 +474,41 @@ document.addEventListener("input",function(e){
 
 loadZhuyinData();
 function loadCurrentLesson(){
-  const key = localStorage.getItem("YC_LAST_LESSON_KEY");
 
-  if(!key){
-    alert("請先到教材清單選擇教材。");
-    return;
-  }
+    const key = localStorage.getItem("YC_LAST_LESSON_KEY");
 
-  const raw = localStorage.getItem(key);
+    if(!key){
+        alert("請先到教材清單選擇教材。");
+        return;
+    }
 
-  if(!raw){
-    alert("找不到教材資料。");
-    return;
-  }
+    const raw = localStorage.getItem(key);
 
-  const lesson = JSON.parse(raw);
+    if(!raw){
+        alert("找不到教材資料。");
+        return;
+    }
 
-  alert("成功載入教材：\n" + (lesson.title || "未命名教材"));
+    const lesson = JSON.parse(raw);
+
+    // ① 將教材課文放入「輸入詞語或句子」
+    document.getElementById("words").value =
+        lesson.text || "";
+
+    // ② 將教材生字放入「本課生字」
+    if(Array.isArray(lesson.newWords)){
+        document.getElementById("lessonChars").value =
+            lesson.newWords.join(" ");
+    }else{
+        document.getElementById("lessonChars").value = "";
+    }
+
+    // ③ 自動重新產生生字簿
+    generateBook();
+
+    // ④ 自動套用本課生字
+    applyLessonChars();
+
+    alert("已載入教材：\n" + (lesson.title || "未命名教材"));
+
 }
