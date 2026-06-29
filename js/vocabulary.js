@@ -67,7 +67,7 @@ document.getElementById("app").innerHTML = `
 
 async function loadZhuyinData(){
   try{
-    const res = await fetch("data/zhuyin.json");
+    const res = await fetch("data/knowledge/chinese/zhuyin.json");
     zhuyinMap = await res.json();
 
     polyphoneMap = {};
