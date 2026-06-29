@@ -33,6 +33,7 @@ document.getElementById("app").innerHTML = `
   <input type="range" id="opacity" min="0.1" max="1" step="0.1" value="0.25">
 
   <button onclick="generateBook()">產生生字簿</button>
+  <button id="btnLoadLesson" onclick="loadCurrentLesson()">📚 使用目前教材</button>
   <button class="green" onclick="generateBlank()">空白生字簿</button>
   <button onclick="saveWork()">儲存作業</button>
   <button onclick="loadWork()">讀取作業</button>
@@ -472,3 +473,22 @@ document.addEventListener("input",function(e){
 });
 
 loadZhuyinData();
+function loadCurrentLesson(){
+  const key = localStorage.getItem("YC_LAST_LESSON_KEY");
+
+  if(!key){
+    alert("請先到教材清單選擇教材。");
+    return;
+  }
+
+  const raw = localStorage.getItem(key);
+
+  if(!raw){
+    alert("找不到教材資料。");
+    return;
+  }
+
+  const lesson = JSON.parse(raw);
+
+  alert("成功載入教材：\n" + (lesson.title || "未命名教材"));
+}
