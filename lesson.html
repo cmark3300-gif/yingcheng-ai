@@ -192,12 +192,16 @@ button{
   <label>學習目標</label>
   <textarea id="goals" placeholder="例如：會認讀本課生字、能理解課文內容、能運用語詞造句"></textarea>
 
-  <div class="btnRow">
+ <div class="btnRow">
     <button class="primary" onclick="saveLesson()">儲存教材</button>
     <button class="green" onclick="loadLesson()">讀取教材</button>
     <button class="orange" onclick="exportLesson()">匯出 JSON</button>
     <button class="gray" onclick="copyLessonKey()">複製教材代碼</button>
     <button class="red" onclick="clearLesson()">清除畫面</button>
+
+    <button class="gray" onclick="location.href='dashboard.html'">🏠 回首頁</button>
+    <button class="green" onclick="location.href='lesson-library.html'">📚 教材清單</button>
+    <button class="orange" onclick="goWorkspace()">📖 教材工作台</button>
   </div>
 
   <p class="small">
@@ -322,7 +326,22 @@ function copyLessonKey(){
     alert("教材代碼：\\n"+key);
   });
 }
+function goWorkspace(){
+  const key=getLessonKey();
 
+  if(!localStorage.getItem(key)){
+    if(confirm("這份教材尚未儲存，要先儲存再進入工作台嗎？")){
+      saveLesson();
+    }else{
+      return;
+    }
+  }else{
+    localStorage.setItem("YC_LAST_LESSON_KEY",key);
+  }
+
+  location.href="lesson-workspace.html";
+}
+  
 function renderPreview(){
   const data=getLessonData();
 
