@@ -65,9 +65,8 @@ document.getElementById("app").innerHTML = `
 </div>
 `;
 
-async function loadZhuyinData().then(()=>{
-    loadCurrentLesson();
-});{
+async function loadZhuyinData();
+{
   try{
     const res = await fetch("data/knowledge/chinese/zhuyin.json");
     zhuyinMap = await res.json();
@@ -474,7 +473,9 @@ document.addEventListener("input",function(e){
   }
 });
 
-loadZhuyinData();
+loadZhuyinData().then(()=>{
+    loadCurrentLesson();
+});
 function loadCurrentLesson(){
 
     const key = localStorage.getItem("YC_LAST_LESSON_KEY");
