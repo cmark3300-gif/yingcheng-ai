@@ -473,8 +473,7 @@ document.addEventListener("input",function(e){
   }
 });
 
-loadZhuyinData().then(()=>{
-    loadCurrentLesson();
+loadZhuyinData();
 });
 function loadCurrentLesson(){
 
