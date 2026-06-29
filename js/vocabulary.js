@@ -65,7 +65,9 @@ document.getElementById("app").innerHTML = `
 </div>
 `;
 
-async function loadZhuyinData(){
+async function loadZhuyinData().then(()=>{
+    loadCurrentLesson();
+});{
   try{
     const res = await fetch("data/knowledge/chinese/zhuyin.json");
     zhuyinMap = await res.json();
