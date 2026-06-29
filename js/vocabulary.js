@@ -473,7 +473,6 @@ document.addEventListener("input",function(e){
 });
 
 loadZhuyinData();
-});
 function loadCurrentLesson(){
 
     const key = localStorage.getItem("YC_LAST_LESSON_KEY");
