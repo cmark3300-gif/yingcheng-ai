@@ -77,7 +77,7 @@ async function loadZhuyinData(){
       }
     });
   }catch(e){
-    alert("注音資料庫讀取失敗，請檢查 data/zhuyin.json");
+    alert("注音資料庫讀取失敗，請檢查 data/knowledge/chinese/zhuyin.json");
     console.error(e);
   }
 
