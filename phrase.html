@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>語詞練習中心｜YC-AI</title>
+<style>
+body{margin:0;font-family:"Microsoft JhengHei",sans-serif;background:#f4f7fb;color:#1f2937;}
+header{background:linear-gradient(90deg,#2563eb,#f97316);color:white;text-align:center;padding:24px 16px;}
+main{max-width:1100px;margin:20px auto;padding:0 16px;}
+.panel{background:white;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+button{border:0;border-radius:8px;padding:10px 14px;margin:5px;background:#2563eb;color:white;font-weight:bold;cursor:pointer;}
+.gray{background:#64748b;}
+.green{background:#16a34a;}
+.badge{display:inline-block;background:#eff6ff;color:#2563eb;border-radius:999px;padding:6px 12px;margin:5px;}
+.option{display:block;margin:10px 0;font-size:17px;}
+.small{color:#64748b;font-size:14px;}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>📖 語詞練習中心</h1>
+  <p>從一課教材產生語詞練習與學習單。</p>
+</header>
+
+<main>
+
+<div class="panel">
+  <h2>教材資訊</h2>
+  <p class="small">目前先建立版面，下一步會自動載入目前教材。</p>
+  <button class="gray" onclick="location.href='dashboard.html'">🏠 回首頁</button>
+  <button class="gray" onclick="location.href='lesson-workspace.html'">📚 回教材工作台</button>
+</div>
+
+<div class="panel">
+  <h2>語詞清單</h2>
+  <div id="phraseList">讀取語詞中...</div>
+</div>
+<div class="panel">
+  <h2>產生哪些練習？</h2>
+  <label class="option"><input type="checkbox"> 抄寫語詞</label>
+  <label class="option"><input type="checkbox"> 看國字寫語詞</label>
+  <label class="option"><input type="checkbox"> 看注音寫語詞</label>
+  <label class="option"><input type="checkbox"> 填空</label>
+  <label class="option"><input type="checkbox"> 配對</label>
+  <label class="option"><input type="checkbox"> 選擇題</label>
+  <label class="option"><input type="checkbox" disabled> AI 素養題（規劃中）</label>
+
+  <button class="green" onclick="alert('語詞學習單產生功能下一版建立')">產生學習單</button>
+</div>
+
+</main>
+<script src="js/phrase.js"></script>
+</body>
+</html>
