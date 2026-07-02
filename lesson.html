@@ -196,6 +196,9 @@ button{
     <button class="primary" onclick="saveLesson()">儲存教材</button>
     <button class="green" onclick="loadLesson()">讀取教材</button>
     <button class="orange" onclick="exportLesson()">匯出 JSON</button>
+<button class="orange" onclick="exportAllLessons()">📤 匯出全部教材</button>
+
+<button class="green" onclick="importLessons()">📥 匯入教材</button>
     <button class="gray" onclick="copyLessonKey()">複製教材代碼</button>
     <button class="red" onclick="clearLesson()">清除畫面</button>
 
@@ -390,7 +393,82 @@ if(lastKey && localStorage.getItem(lastKey)){
 }else{
   renderPreview();
 }
-</script>
 
+function exportAllLessons(){
+console.log(Object.keys(localStorage));
+
+    let allLessons = {};
+
+    // 找出所有教材
+    for(let i=0;i<localStorage.length;i++){
+
+        const key = localStorage.key(i);
+
+        if(key.startsWith("YC_LESSON_")){
+            allLessons[key] = JSON.parse(localStorage.getItem(key));
+        }
+
+    }
+
+    const blob = new Blob(
+        [JSON.stringify(allLessons,null,2)],
+        {type:"application/json"}
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+
+    a.href = url;
+
+    a.download = "YC-AI-教材備份.json";
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+    alert("教材已匯出完成！");
+}
+function importLessons(){
+
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json,application/json";
+
+    input.onchange = function(event){
+
+        const file = event.target.files[0];
+        if(!file) return;
+
+        const reader = new FileReader();
+
+        reader.onload = function(e){
+
+            try{
+                const data = JSON.parse(e.target.result);
+
+                let count = 0;
+
+                Object.keys(data).forEach(key=>{
+                    if(key.startsWith("YC_LESSON_")){
+                        localStorage.setItem(key, JSON.stringify(data[key]));
+                        count++;
+                    }
+                });
+
+                alert("教材匯入完成，共匯入 " + count + " 份教材。");
+
+            }catch(err){
+                alert("匯入失敗，請確認檔案是 YC-AI 教材備份 JSON。");
+            }
+
+        };
+
+        reader.readAsText(file);
+    };
+
+    input.click();
+}
+</script>
 </body>
 </html>
